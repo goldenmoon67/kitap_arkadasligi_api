@@ -1,45 +1,20 @@
-require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
-const admin = require("firebase-admin");
-const credentials = require("./serviceAccountKey.json");
+const firebase=require("./utils/firebase-admin");
+const database=require("./utils/database");
 const routes = require('./routes/routes');
 
-const mongoString = process.env.DATABASE_URL;
-admin.initializeApp({
-    credential: admin.credential.cert(credentials),
-});
-
-mongoose.connect(mongoString);
-const database = mongoose.connection;
-
-database.on('error', (error) => {
-    console.log(error)
-})
-
-database.once('connected', () => {
-    console.log('Database Connected');
-})
+//firebase, express and database init
+firebase.initFirebaseAdmin();
+database.connectDatabase;
 const app = express();
 
+
+//express config
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.post('/register', async (req, res) => {
-
-    const userResponse = await admin.auth().createUser({
-        email: req.body.email,
-        password: req.body.password,
-        emailVerified: false,
-        disabled: false
-    });
-
-    res.json(userResponse);
-});
-
-
-
 app.use('/api', routes)
 
+//server run
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server Started at ${8080}`)

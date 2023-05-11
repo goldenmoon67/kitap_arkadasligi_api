@@ -1,5 +1,7 @@
 const express = require('express');
 const Model = require('../models/model');
+const firebase = require("../utils/firebase-admin");
+
 const router = express.Router()
 
 router.post('/create', async (req, res) => {
@@ -9,31 +11,31 @@ router.post('/create', async (req, res) => {
     });
 
     try {
-        const dataToSave =await data.save();
+        const dataToSave = await data.save();
         res.status(200).json(dataToSave)
     }
     catch (error) {
-        res.status(400).json({message: error.message})
+        res.status(400).json({ message: error.message })
     }
 })
 
 router.get('/getAll', async (req, res) => {
-    try{
+    try {
         const data = await Model.find();
         res.json(data)
     }
-    catch(error){
-        res.status(500).json({message: error.message})
+    catch (error) {
+        res.status(500).json({ message: error.message })
     }
 })
 
 router.get('/getOne/:id', async (req, res) => {
-    try{
+    try {
         const data = await Model.findById(req.params.id);
         res.json(data)
     }
-    catch(error){
-        res.status(500).json({message: error.message})
+    catch (error) {
+        res.status(500).json({ message: error.message })
     }
 });
 
@@ -65,4 +67,29 @@ router.delete('/delete/:id', async (req, res) => {
         res.status(400).json({ message: error.message })
     }
 })
+
+
+
+
+router.post('/register', async (req, res) => {
+    try {
+        const userResponse = await firebase.admin.auth().createUser({
+            email: req.body.email,
+            password: req.body.password,
+            emailVerified: false,
+            disabled: false
+        });
+        console.log("Registered succesfly" + userResponse);
+        res.status(200).json(userResponse);
+
+    } catch (error) {
+
+
+        res.status(400).json({message:error});
+        console.log(error);
+    }
+
+});
+
+
 module.exports = router;
