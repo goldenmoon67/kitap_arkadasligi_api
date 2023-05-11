@@ -1,7 +1,17 @@
 const express = require('express');
 const Model = require('../models/model');
 const firebase = require("../utils/firebase-admin");
+const nodemailer=require("nodemailer");
+const sendgridTransport=require("nodemailer-sendgrid-transport");
 
+
+const transporter=nodemailer.createTransport(sendgridTransport(
+   {
+    auth:{
+        api_key:"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",
+    }
+   }
+));
 const router = express.Router()
 
 router.post('/create', async (req, res) => {
@@ -81,6 +91,26 @@ router.post('/register', async (req, res) => {
         });
         console.log("Registered succesfly" + userResponse);
         res.status(200).json(userResponse);
+
+    } catch (error) {
+
+
+        res.status(400).json({message:error});
+        console.log(error);
+    }
+
+});
+
+router.post('/sendMail', async (req, res) => {
+    try {
+     await  transporter.sendMail({
+        to:"abdulmirac@gmail.com",
+        from:"mirac@z2h.it",
+        subject:"Succes",
+        html:"<h1> Succes </h1>"
+       });
+       res.status(200).json({message:"email was sent"});
+
 
     } catch (error) {
 
