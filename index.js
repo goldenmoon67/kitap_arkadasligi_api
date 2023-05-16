@@ -1,13 +1,25 @@
 const express = require('express');
 const firebase=require("./utils/firebase-admin");
-const database=require("./utils/database");
 const routes = require('./routes/routes');
-
+require('dotenv').config();
+const mongoose = require('mongoose');
+const mongoString = process.env.DATABASE_URL;
 //firebase, express and database init
 firebase.initFirebaseAdmin();
-database.connectDatabase;
 const app = express();
 
+
+//database connection
+mongoose.connect(mongoString);
+const database = mongoose.connection;
+
+database.on('error', (error) => {
+    console.log(error)
+});
+
+database.once('connected', () => {
+    console.log('Database Connected');
+});
 
 //express config
 app.use(express.json());
@@ -18,4 +30,4 @@ app.use('/api', routes)
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server Started at ${8080}`)
-})
+});
