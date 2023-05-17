@@ -1,6 +1,6 @@
 const express = require('express');
-const firebase=require("./utils/firebase-admin");
-const routes = require('./routes/routes');
+const firebase=require("./src/utils/firebase-admin");
+const routes = require('./src/routes/routes');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const mongoString = process.env.DATABASE_URL;
