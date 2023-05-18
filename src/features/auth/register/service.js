@@ -37,6 +37,15 @@ exports.verifyEmail = async (req, res) => {
         if (!isCodeTrue) {
             return res.send({ "message": "Invalid OTP code" });
         }
+
+        const isPassed = (Math.abs(Date.now() - Date.parse(registerModel.createdTime)) / 1000 / 60) < 10 ? false : true;
+
+        if (isPassed) {
+            const otpGenerated = await handler.generateOTP();
+            await handler.sendMail(email, otpGenerated);
+            await handler.createUserRegisterModel(email,otpGenerated);
+            return res.send({ "message": "The OTP code has expired. We have sent a new email. Please check your inbox" });
+        }
         const response = await handler.createUser(email, password);
 
         return res.status(200).json({ "Response": response });
