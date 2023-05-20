@@ -5,7 +5,7 @@ const RegisterModel = require('../../../models/auth/register');
 const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
 const firebase=require("../../../utils/firebase-admin");
-const htmlConsts=require("../../../consts/htmls");
+const htmlConsts=require("../../../consts/consts");
 const { otpGen } = require('otp-gen-agent');
 require('dotenv').config();
 const api_key = process.env.SENDGRID_API_KEY;
