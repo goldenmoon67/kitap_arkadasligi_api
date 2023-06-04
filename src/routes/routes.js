@@ -11,8 +11,8 @@ const authHandler = require('../features/auth/login/handler');
 router.post('/register', registerhHandler.sendRegisterMail);
 router.post('/verify-email', registerhHandler.verifyEmail);
 router.post('/login', loginHandler.login);
-router.get('/getSessionUser',authHandler.authenticate, userHandler.getSessionUser);
-router.get('/getUser/:id',authHandler.authenticate, userHandler.getUser);
+router.get('/users/sessionUser',authHandler.authenticate, userHandler.getSessionUser);
+router.get('/users/:id',authHandler.authenticate, userHandler.getUser);
 
 
 module.exports = router;

@@ -11,7 +11,7 @@ exports.authenticate = async (req, res, next) => {
     try {
         token= idToken.split(" ")[1];
         const decodedToken = await fb.admin.app().auth().verifyIdToken(token);
-        req.user = decodedToken;
+        req.user = decodedToken; 
         next();
     } catch (error) {
         return res.status(403).json({ error: error });
