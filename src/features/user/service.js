@@ -1,29 +1,32 @@
 const userHandler = require('./handler');
 
-exports.getSessionUser = async (req, res) => {
-    try {
-        const userId = req.user.user_id; 
-        console.log(userId)
-        const response = await userHandler.findUserByID(userId);
-        return res.status(200).json({ "response": response });
-
-    } catch (error) {
-        res.status(400).json({ message: error });
-        console.log(error);
-    }
-
-}; 
 
 exports.getUser = async (req, res) => {
     try {
-        const userId = req.params.id;
-        console.log(userId)
+        var userId = req.params.id;
+        if(!userId){
+             userId = req.user.user_id; 
+                
+        }
+        console.log(userId);
         const response = await userHandler.findUserByID(userId);
-        return res.status(200).json({ "response": response });
+        return res.status(201).json({
+            userId: response.userId,
+            nickName: response.nickName,
+            email: response.email,
+            friends: response.friends,
+            books: response.books,
+            movies: response.movies,
+            series: response.series,
+            advertisements: response.advertisements,
+            rates: response.rates,
+        });
 
     } catch (error) {
-        res.status(400).json({ message: error });
-        console.log(error);
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
     }
 
 }; 

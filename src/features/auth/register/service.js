@@ -6,7 +6,9 @@ exports.sendRegisterMail = async (req, res) => {
 
         const isExisting = await handler.findUserByEmail(req.body.email);
         if (isExisting) {
-            return res.send({ "message": "Email already exists" });
+            const error = new Error("Email already exists");
+            error.statusCode = 422;
+            throw error;
         }
         const otpGenerated = await handler.generateOTP();
 
@@ -15,11 +17,13 @@ exports.sendRegisterMail = async (req, res) => {
             const emailResponse = await handler.sendMail(req.body.email, otpGenerated);
         }
 
-        res.status(200).json({ "message": "Email Sent" });
+        res.status(201).json();
 
-    } catch (error) {
-        res.status(400).json({ message: error });
-        console.log(error);
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 
 };
@@ -31,11 +35,15 @@ exports.verifyEmail = async (req, res) => {
 
         const registerModel = await handler.findRegisterModelByEmail(req.body.email);
         if (!registerModel) {
-            return res.send({ "message": "Email was not registered" });
+            const error = new Error("Email was not registered");
+            error.statusCode = 403;
+            throw error;
         }
         const isCodeTrue = otpCode === registerModel.otpCode;
         if (!isCodeTrue) {
-            return res.send({ "message": "Invalid OTP code" });
+            const error = new Error("Invalid OTP code");
+            error.statusCode = 422;
+            throw error;
         }
 
         const isPassed = (Math.abs(Date.now() - Date.parse(registerModel.createdTime)) / 1000 / 60) < 10 ? false : true;
@@ -43,16 +51,23 @@ exports.verifyEmail = async (req, res) => {
         if (isPassed) {
             const otpGenerated = await handler.generateOTP();
             await handler.sendMail(email, otpGenerated);
-            await handler.createUserRegisterModel(email,otpGenerated);
-            return res.send({ "message": "The OTP code has expired. We have sent a new email. Please check your inbox" });
+            await handler.createUserRegisterModel(email, otpGenerated);
+            const error = new Error("The OTP code has expired. We have sent a new email. Please check your inbox");
+            error.statusCode = 422;
+            throw error;
         }
         const response = await handler.createUser(email, password);
 
-        return res.status(200).json({ "Response": response });
+        return res.status(201).json({
+            userId: response.userId,
+            createdTime: response.createdTime,
+        });
 
-    } catch (error) {
-        res.status(400).json({ message: error });
-        console.log(error);
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 
 }; 

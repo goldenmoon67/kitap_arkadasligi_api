@@ -3,19 +3,24 @@ const fb = require("../../../utils/firebase-admin")
 
 
 exports.authenticate = async (req, res, next) => {
-    var token;
-    const idToken = req.headers.authorization
-    if (!idToken) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-    try {
-        token= idToken.split(" ")[1];
-        const decodedToken = await fb.admin.app().auth().verifyIdToken(token);
-        req.user = decodedToken; 
-        next();
-    } catch (error) {
-        return res.status(403).json({ error: error });
 
+    try {
+        var token;
+        const idToken = req.headers.authorization
+        if (!idToken) {
+            const error = new Error("Unauthorized");
+            error.statusCode = 401;
+            throw error;
+        }
+        token = idToken.split(" ")[1];
+        const decodedToken = await fb.admin.app().auth().verifyIdToken(token);
+        req.user = decodedToken;
+        next();
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
 
 

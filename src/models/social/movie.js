@@ -2,40 +2,36 @@ const mongoose = require('mongoose');
 
 const dataSchema = new mongoose.Schema({
 
-    userId: {
-        required: true,
-        type: String
-    },
 
-    email: {
+    name: {
         required: true,
         type: String
     },
-    nickName: {
+    description: {
+        required: true,
         type: String,
     },
-    createdTime: {
+    director: {
+        required: true,
         type: String,
-        default: new Date().toISOString(),
     },
-    books: {
+    imageUrl: {
+        required: true,
+        type: String,
+    },
+    duration: {
+        type: String,
+            },
+    categories: {
         type: Array,
         default: [],
     },
-    movies: {
-        type: Array,
-        default: [],
-    },
-    series: {
-        type: Array,
-        default: [],
-    },
-    friends: {
+    readBy: {
         type: Array,
         default: [],
     },
    
-    advertisements: {
+    comments: {
         type: Array,
         default: [],
     },
@@ -46,4 +42,4 @@ const dataSchema = new mongoose.Schema({
 });
 
 
-module.exports = mongoose.model('User', dataSchema)
+module.exports = mongoose.model('Movie', dataSchema)//TODO::this is not completed

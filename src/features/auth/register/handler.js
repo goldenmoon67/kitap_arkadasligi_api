@@ -4,8 +4,8 @@ const User = require('../../../models/user');
 const RegisterModel = require('../../../models/auth/register');
 const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
-const firebase=require("../../../utils/firebase-admin");
-const htmlConsts=require("../../../consts/consts");
+const firebase = require("../../../utils/firebase-admin");
+const htmlConsts = require("../../../consts/consts");
 const { otpGen } = require('otp-gen-agent');
 require('dotenv').config();
 const api_key = process.env.SENDGRID_API_KEY;
@@ -27,16 +27,18 @@ exports.createUser = async (email, password) => {
         disabled: false
     });
     if (!userResponse) {
-        return res.send({ "message": "Unable to registered." });
+        const error = new Error("Unable to registered.");
+        error.statusCode = 500;
+        throw error;
     }
     const data = new User({
         userId: userResponse.uid,
         email: email,
     });
     const saveResponse = await data.save();
-    if(saveResponse){
-        const registerModel= await this.findRegisterModelByEmail(email);
-        const deletedResponse=await RegisterModel.findByIdAndDelete(registerModel.id);
+    if (saveResponse) {
+        const registerModel = await this.findRegisterModelByEmail(email);
+        const deletedResponse = await RegisterModel.findByIdAndDelete(registerModel.id);
     }
     return saveResponse;
 };
@@ -65,21 +67,13 @@ exports.findRegisterModelByEmail = async (email) => {
 
 
 exports.sendMail = async (email, otpCode) => {
-    try {
-        const response = await transporter.sendMail({
-            to: email,
-            from: "mirac@z2h.it",
-            subject: "E-posta adresinizi doğrulayın",
-            html: htmlConsts.VERIFYMAILHTML(otpCode),
-        });
-
-        console.log(response);
-
-        return [200, "Email sent"];
-
-    } catch (error) {
-        return [400, error]
-    }
+    const response = await transporter.sendMail({
+        to: email,
+        from: "mirac@z2h.it",
+        subject: "E-posta adresinizi doğrulayın",
+        html: htmlConsts.VERIFYMAILHTML(otpCode),
+    });
+    return response;
 };
 
 exports.createUserRegisterModel = async (email, otpCode) => {
@@ -96,7 +90,9 @@ exports.createUserRegisterModel = async (email, otpCode) => {
 
                 });
         if (!updatedUser) {
-            return [false, 'Unable to sign you up'];
+            const error = new Error('Unable to sign you up');
+            error.statusCode = 500;
+            throw error;
         }
 
         return [true, updatedUser];
@@ -106,7 +102,9 @@ exports.createUserRegisterModel = async (email, otpCode) => {
         otpCode: otpGenerated,
     });
     if (!newUser) {
-        return [false, 'Unable to sign you up'];
+        const error = new Error('Unable to sign you up');
+        error.statusCode = 500;
+        throw error;
     }
 
     return [true, newUser];

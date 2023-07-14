@@ -17,11 +17,13 @@ exports.login = async (req, res) => {
             userId: data.localId,
 
         }
-        return res.status(200).json({ "accesToken": standardToken });
+        return res.status(201).json( standardToken );
 
     } catch (error) {
-        res.status(400).json({ message: error });
-        console.log(error);
+        if (!error.statusCode) {
+            error.statusCode = 500;
+          }
+          next(error);
     }
 
 }; 
