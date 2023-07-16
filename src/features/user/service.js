@@ -1,7 +1,7 @@
 const userHandler = require('./handler');
 
 
-exports.getUser = async (req, res) => {
+exports.getUser = async  (req, res,next) => {
     try {
         var userId = req.params.id;
         if(!userId){

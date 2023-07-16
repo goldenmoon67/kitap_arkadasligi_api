@@ -1,9 +1,16 @@
 const handler = require('./handler');
+const {  validationResult } = require("express-validator");
 
 
-exports.sendRegisterMail = async (req, res) => {
+exports.sendRegisterMail = async  (req, res,next) => {
     try {
-
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const error =  new Error("Validation failed");
+            error.statusCode=422;
+            error.data=errors.array();
+            throw error;
+        }
         const isExisting = await handler.findUserByEmail(req.body.email);
         if (isExisting) {
             const error = new Error("Email already exists");
@@ -29,8 +36,15 @@ exports.sendRegisterMail = async (req, res) => {
 };
 
 
-exports.verifyEmail = async (req, res) => {
+exports.verifyEmail = async  (req, res,next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const error =  new Error("Validation failed");
+            error.statusCode=422;
+            error.data=errors.array();
+            throw error;
+        }
         const { email, otpCode, password } = req.body;
 
         const registerModel = await handler.findRegisterModelByEmail(req.body.email);
