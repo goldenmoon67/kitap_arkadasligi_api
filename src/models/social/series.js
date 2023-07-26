@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const dataSchema = new mongoose.Schema({
 
@@ -19,18 +20,20 @@ const dataSchema = new mongoose.Schema({
         required: true,
         type: String,
     },
-    duration: {
-        type: String,
-            },
+    director: {
+        required: true,
+        type: Schema.Types.ObjectId,
+        ref: 'Director'
+    },
     categories: {
         type: Array,
         default: [],
     },
-    readBy: {
+    watchedBy: {
         type: Array,
         default: [],
     },
-   
+
     comments: {
         type: Array,
         default: [],
@@ -39,7 +42,7 @@ const dataSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-});
+},{ timestamps: true });
 
 
-module.exports = mongoose.model('Series', dataSchema)//TODO::this is not completed
+module.exports = mongoose.model('Series', dataSchema)

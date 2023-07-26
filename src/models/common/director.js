@@ -4,36 +4,21 @@ const Schema = mongoose.Schema;
 const dataSchema = new mongoose.Schema({
 
 
-    name: {
+    fullName: {
         required: true,
         type: String
     },
-    description: {
-        required: true,
-        type: String,
+    movies:{
+        type: Array,
+        default: [],
     },
-    author: {
-        required: true,
-        type: Schema.Types.ObjectId,
-        ref: 'Author' 
+    series:{
+        type: Array,
+        default: [],
     },
     imageUrl: {
-        required: true,
         type: String,
     },
-    pageCount: {
-        required:true,
-        type: Number,
-    },
-    categories: {
-        type: Array,
-        default: [],
-    },
-    readBy: {
-        type: Array,
-        default: [],
-    },
-   
     comments: {
         type: Array,
         default: [],
@@ -44,4 +29,4 @@ const dataSchema = new mongoose.Schema({
     },
 },{ timestamps: true });
 
-module.exports = mongoose.model('Book', dataSchema)
+module.exports = mongoose.model('Director', dataSchema)

@@ -6,17 +6,12 @@ const dataSchema = new mongoose.Schema({
         required: true,
         type: String
     },
-
     email: {
         required: true,
         type: String
     },
     nickName: {
         type: String,
-    },
-    createdTime: {
-        type: String,
-        default: new Date().toISOString(),
     },
     books: {
         type: Array,
@@ -43,7 +38,7 @@ const dataSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-});
+},{ timestamps: true });
 
 
 module.exports = mongoose.model('User', dataSchema)
