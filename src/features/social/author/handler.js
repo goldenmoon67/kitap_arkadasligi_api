@@ -14,21 +14,18 @@ exports.createAuthor = async (AuthorObject) => {
 };
 
 exports.findByName = async (name) => {
-    const book = await Author.findOne({
+    const author = await Author.findOne({
         name,
     });
-    return book;
+    return author;
 };
 
-exports.findById = async (id) => {
-    const book = await Author.findOne({
-        id,
+exports.findById = async (_id) => {
+
+    const author = await Author.findOne({
+        _id,
     });
-    if (!book) {
-        const error = new Error("Forbidden Resource.");
-        error.statusCode = 500;
-        throw error;
-    }
-    return book;
+
+    return author;
 };
 

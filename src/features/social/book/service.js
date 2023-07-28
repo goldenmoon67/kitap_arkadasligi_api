@@ -1,6 +1,8 @@
 
 const Book = require("../../../models/social/book");
-const handler = require("./handler");
+const bookHandler = require("./handler");
+const authorHandler = require("../author/handler");
+
 const { validationResult } = require("express-validator");
 
 exports.createBook = async (req, res, next) => {
@@ -22,7 +24,15 @@ exports.createBook = async (req, res, next) => {
 
         });
 
-        const response = await handler.createBook(BookObject);
+        const author=await authorHandler.findById(req.body.author);
+        if(!author){
+            const error = new Error("Author is not exists");
+            error.statusCode = 422;
+            throw error;
+        }
+         const response = await bookHandler.createBook(BookObject);
+         author.books.push(response._id);       
+        author.save();
         return res.status(201).json({ createdTime: response.createdAt, bookId: response.id });
 
     } catch (error) {
