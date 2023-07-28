@@ -9,7 +9,6 @@ const dataSchema = new mongoose.Schema({
         type: String
     },
     description: {
-        required: true,
         type: String,
     },
     author: {
@@ -18,7 +17,6 @@ const dataSchema = new mongoose.Schema({
         ref: 'Author' 
     },
     imageUrl: {
-        required: true,
         type: String,
     },
     pageCount: {

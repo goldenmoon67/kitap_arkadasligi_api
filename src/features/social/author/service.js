@@ -1,9 +1,9 @@
 
-const Book = require("../../../models/social/book");
+const Author = require("../../../models/common/author");
 const handler = require("./handler");
 const { validationResult } = require("express-validator");
 
-exports.createBook = async (req, res, next) => {
+exports.createAuthor = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -12,18 +12,13 @@ exports.createBook = async (req, res, next) => {
             error.data = errors.array();
             throw error;
         }
-        const BookObject = new Book({
-            name: req.body.name,
-            description: req.body.description,
-            author: req.body.author,
-            categories: req.body.categories,
+        const AuthorObject = new Author({
+            fullName: req.body.fullName,
             imageUrl: req.body.imageUrl,
-            pageCount: req.body.pageCount,
-
         });
 
-        const response = await handler.createBook(BookObject);
-        return res.status(201).json({ createdTime: response.createdAt, bookId: response.id });
+        const response = await handler.createAuthor(AuthorObject);
+        return res.status(201).json({ createdTime: response.createdAt, authorId: response.id });
 
     } catch (error) {
         if (!error.statusCode) {
