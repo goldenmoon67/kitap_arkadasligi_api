@@ -15,6 +15,7 @@ exports.createAuthor = async (req, res, next) => {
         const AuthorObject = new Author({
             fullName: req.body.fullName,
             imageUrl: req.body.imageUrl,
+            
         });
 
         const response = await handler.createAuthor(AuthorObject);
