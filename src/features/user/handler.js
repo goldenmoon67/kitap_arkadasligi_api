@@ -25,7 +25,7 @@ exports.updateUser = async (updatedData) => {
 }
 exports.findByNickName = async (nickName) => {
   const user = await User.findOne({
-    nickName
+    nickName:{$regex : nickName.toString(), "$options": "i" }
   });
   if (!user) {
     return false;

@@ -40,7 +40,7 @@ router.get('/users/:id', authService.authenticate, userService.getUser);
 //PUT UPDATE PROFİLE
 router.put('/update-profile',
     [
-        userValidator.nickName
+        userValidator.nickName,
     ],
     authService.authenticate, userService.updateProfile);
 
