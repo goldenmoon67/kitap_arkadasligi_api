@@ -61,7 +61,19 @@ router.post('/books', [
     bookValidator.pageCountValidayor,
     bookValidator.authorValidator
 ],
+    authService.authenticate,
     bookService.createBook
 );
 
+//READ BOOK
+router.put('/books/:bookId/read',
+    authService.authenticate,
+    bookService.readABook
+);
+
+//REMOVE READ BOOK
+router.put('/books/:bookId/unread',
+    authService.authenticate,
+    bookService.removeReadBook
+);
 module.exports = router;

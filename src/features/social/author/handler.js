@@ -2,7 +2,7 @@ const Author= require("../../../models/common/author");
 
 
 exports.createAuthor = async (AuthorObject) => {
-    const isExisting=await this.findByName(AuthorObject.name);
+    const isExisting=await this.findByName(AuthorObject.fullName);
 
     if(isExisting){
         const error = new Error("Already exist.");
@@ -13,9 +13,9 @@ exports.createAuthor = async (AuthorObject) => {
     return response;
 };
 
-exports.findByName = async (name) => {
+exports.findByName = async (fullName) => {
     const author = await Author.findOne({
-        name,
+        fullName,
     });
     return author;
 };

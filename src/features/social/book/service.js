@@ -1,7 +1,6 @@
 
 const Book = require("../../../models/social/book");
 const bookHandler = require("./handler");
-const authorHandler = require("../author/handler");
 
 const { validationResult } = require("express-validator");
 
@@ -23,17 +22,41 @@ exports.createBook = async (req, res, next) => {
             pageCount: req.body.pageCount,
 
         });
-
-        const author=await authorHandler.findById(req.body.author);
-        if(!author){
-            const error = new Error("Author is not exists");
-            error.statusCode = 422;
-            throw error;
-        }
-         const response = await bookHandler.createBook(BookObject);
-         author.books.push(response._id);       
-        author.save();
+        const response = await bookHandler.createBook(BookObject,req.body.author);
+    
         return res.status(201).json({ createdTime: response.createdAt, bookId: response.id });
+
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+
+exports.readABook = async (req, res, next) => {
+    try {
+        
+        const bookId = req.params.bookId;
+        const userId = req.user.user_id;
+        const result=  await bookHandler.readABook(bookId, userId);
+        return res.status(201).json();
+
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.removeReadBook = async (req, res, next) => {
+    try {
+        const bookId = req.params.bookId;
+        const userId = req.user.user_id;
+        const result=  await bookHandler.removeReadBook(bookId, userId);
+        return res.status(201).json();
 
     } catch (error) {
         if (!error.statusCode) {
