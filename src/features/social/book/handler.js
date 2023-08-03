@@ -103,3 +103,7 @@ exports.removeReadBook = async (bookId, userId) => {
 };
 
 
+exports.getBooks = async () => {
+ const response= await Book.find().select("name description pageCount")//TODO::this part will be added with details
+return response;
+};

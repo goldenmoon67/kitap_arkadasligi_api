@@ -33,7 +33,20 @@ exports.createBook = async (req, res, next) => {
         next(error);
     }
 };
+exports.listBooks = async (req, res, next) => {
+    try {
+        
+        const response = await bookHandler.getBooks();
+        //TODO: it need pagination
+        return res.status(200).json(response);
 
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
 
 exports.readABook = async (req, res, next) => {
     try {

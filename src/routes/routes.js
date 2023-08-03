@@ -76,4 +76,10 @@ router.put('/books/:bookId/unread',
     authService.authenticate,
     bookService.removeReadBook
 );
+
+//GET BOOKS LIST
+router.get('/books',
+    authService.authenticate,
+    bookService.listBooks
+);
 module.exports = router;
