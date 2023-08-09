@@ -33,7 +33,8 @@ exports.findById = async (_id) => {
 
     const book = await Book.findById({
         _id,
-    });
+    }).populate("author")
+    ;
     if (!book) {
         const error = new Error("Forbidden Resource book.");
         error.statusCode = 500;

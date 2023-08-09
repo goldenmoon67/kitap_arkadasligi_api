@@ -48,6 +48,21 @@ exports.listBooks = async (req, res, next) => {
     }
 };
 
+exports.bookDetail = async (req, res, next) => {
+    try {
+        const bookId = req.params.id;
+        
+        const response=  await bookHandler.findById(bookId);
+
+        return res.status(200).json(response);
+
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
 exports.readABook = async (req, res, next) => {
     try {
         

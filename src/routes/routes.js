@@ -65,6 +65,12 @@ router.post('/books', [
     bookService.createBook
 );
 
+//GET BOOKS{id}
+router.get('/books/:id',
+    authService.authenticate,
+    bookService.bookDetail
+);
+
 //READ BOOK
 router.put('/books/:bookId/read',
     authService.authenticate,
@@ -76,6 +82,8 @@ router.put('/books/:bookId/unread',
     authService.authenticate,
     bookService.removeReadBook
 );
+
+
 
 //GET BOOKS LIST
 router.get('/books',
