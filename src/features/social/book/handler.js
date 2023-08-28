@@ -1,6 +1,7 @@
 const Book = require("../../../models/social/book");
 const userhandler = require("../../user/handler");
 const authorHandler = require("../author/handler");
+const Consts=require("../../../consts/consts");
 
 exports.createBook = async (BookObject,authorId) => {
     const isExisting = await this.findByName(BookObject.name);
@@ -104,7 +105,11 @@ exports.removeReadBook = async (bookId, userId) => {
 };
 
 
-exports.getBooks = async () => {
- const response= await Book.find().select("name description pageCount")//TODO::this part will be added with details
+exports.getBooks = async (limit,page) => {const options = {
+    page: page||1,
+    limit: limit||Consts.DEFAULT_PAGING_ELEMENT_LIMIT,
+  };
+  
+ const response= await Book.paginate({},options);
 return response;
 };

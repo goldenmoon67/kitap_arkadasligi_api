@@ -77,3 +77,5 @@ exports.firebaseConfigs={
     appId: "1:711798633081:web:58da7b69938a8e522c9aa8",
     measurementId: "G-9ZHFYHW9QK"
 }
+
+exports.DEFAULT_PAGING_ELEMENT_LIMIT=10;

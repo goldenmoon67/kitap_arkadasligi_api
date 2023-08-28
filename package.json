@@ -17,6 +17,7 @@
     "firebase-admin": "^11.8.0",
     "install": "^0.13.0",
     "mongoose": "^7.1.0",
+    "mongoose-paginate-v2": "^1.7.31",
     "nodemailer": "^6.9.2",
     "nodemailer-sendgrid-transport": "^0.2.0",
     "nodemon": "^2.0.22",

@@ -86,7 +86,7 @@ router.put('/books/:bookId/unread',
 
 
 //GET BOOKS LIST
-router.get('/books',
+router.get('/books/:limit?/:page?',
     authService.authenticate,
     bookService.listBooks
 );
