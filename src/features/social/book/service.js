@@ -36,8 +36,9 @@ exports.createBook = async (req, res, next) => {
 exports.listBooks = async (req, res, next) => {
     try {
         
-        const response = await bookHandler.getBooks();
-        //TODO: it need pagination
+        const limit=req.query.limit;
+        const page=req.query.page
+        const response = await bookHandler.getBooks(limit,page);
         return res.status(200).json(response);
 
     } catch (error) {
