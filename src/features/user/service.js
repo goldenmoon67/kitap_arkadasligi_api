@@ -55,3 +55,19 @@ exports.updateProfile = async (req, res, next) => {
     }
 
 };
+
+exports.listUsers = async (req, res, next) => {
+    try {
+
+        const limit = req.query.limit;
+        const page = req.query.page
+        const response = await userHandler.getUsers(limit, page);
+        return res.status(200).json(response);
+
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};

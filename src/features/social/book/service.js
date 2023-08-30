@@ -22,8 +22,8 @@ exports.createBook = async (req, res, next) => {
             pageCount: req.body.pageCount,
 
         });
-        const response = await bookHandler.createBook(BookObject,req.body.author);
-    
+        const response = await bookHandler.createBook(BookObject, req.body.author);
+
         return res.status(201).json({ createdTime: response.createdAt, bookId: response.id });
 
     } catch (error) {
@@ -35,10 +35,10 @@ exports.createBook = async (req, res, next) => {
 };
 exports.listBooks = async (req, res, next) => {
     try {
-        
-        const limit=req.query.limit;
-        const page=req.query.page
-        const response = await bookHandler.getBooks(limit,page);
+
+        const limit = req.query.limit;
+        const page = req.query.page
+        const response = await bookHandler.getBooks(limit, page);
         return res.status(200).json(response);
 
     } catch (error) {
@@ -52,8 +52,8 @@ exports.listBooks = async (req, res, next) => {
 exports.bookDetail = async (req, res, next) => {
     try {
         const bookId = req.params.id;
-        
-        const response=  await bookHandler.findById(bookId);
+
+        const response = await bookHandler.findById(bookId);
 
         return res.status(200).json(response);
 
@@ -66,10 +66,10 @@ exports.bookDetail = async (req, res, next) => {
 };
 exports.readABook = async (req, res, next) => {
     try {
-        
+
         const bookId = req.params.bookId;
         const userId = req.user.user_id;
-        const result=  await bookHandler.readABook(bookId, userId);
+        const result = await bookHandler.readABook(bookId, userId);
         return res.status(201).json();
 
     } catch (error) {
@@ -84,7 +84,7 @@ exports.removeReadBook = async (req, res, next) => {
     try {
         const bookId = req.params.bookId;
         const userId = req.user.user_id;
-        const result=  await bookHandler.removeReadBook(bookId, userId);
+        const result = await bookHandler.removeReadBook(bookId, userId);
         return res.status(201).json();
 
     } catch (error) {

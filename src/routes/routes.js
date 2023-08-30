@@ -84,10 +84,22 @@ router.put('/books/:bookId/unread',
 );
 
 
-
 //GET BOOKS LIST
 router.get('/books/:limit?/:page?',
     authService.authenticate,
     bookService.listBooks
 );
+
+//GET USERS LIST
+router.get('/users/:limit?/:page?',
+    authService.authenticate,
+    userService.listUsers
+);
+
+//GET AUTHORS LIST
+router.get('/authors/:limit?/:page?',
+    authService.authenticate,
+    authorService.listAuthors
+);
+
 module.exports = router;
