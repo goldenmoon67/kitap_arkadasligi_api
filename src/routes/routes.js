@@ -11,6 +11,8 @@ const commonValidator = require("../validators/common");
 const authorValidator = require("../validators/author");
 const authorService = require("../features/social/author/service");
 const userValidator = require("../validators/user");
+const directorService = require("../../src/features/social/director/service");
+
 //REGISTER
 router.post('/register', [authValidator.emailValidator], registerService.sendRegisterMail);
 
@@ -100,6 +102,21 @@ router.get('/users/:limit?/:page?',
 router.get('/authors/:limit?/:page?',
     authService.authenticate,
     authorService.listAuthors
+);
+
+//CREATE DIRECTOR
+router.post('/directors', [
+    commonValidator.imageUrlValidator,
+    authorValidator.fullNameValidator,
+],
+    authService.authenticate,
+    directorService.createDirector
+);
+
+//GET DIRECTORS LIST
+router.get('/directors/:limit?/:page?', 
+    authService.authenticate,
+    directorService.listDirectors
 );
 
 module.exports = router;
