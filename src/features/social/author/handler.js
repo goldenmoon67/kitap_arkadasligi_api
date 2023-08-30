@@ -1,15 +1,16 @@
-const Author= require("../../../models/common/author");
+const Author = require("../../../models/common/author");
+const Consts = require("../../../consts/consts");
 
 
 exports.createAuthor = async (AuthorObject) => {
-    const isExisting=await this.findByName(AuthorObject.fullName);
+    const isExisting = await this.findByName(AuthorObject.fullName);
 
-    if(isExisting){
+    if (isExisting) {
         const error = new Error("Already exist.");
         error.statusCode = 500;
         throw error;
     }
-    const response= await Author.create(AuthorObject);
+    const response = await Author.create(AuthorObject);
     return response;
 };
 
@@ -29,3 +30,12 @@ exports.findById = async (_id) => {
     return author;
 };
 
+exports.getAuthors = async (limit, page) => {
+    const options = {
+        page: page || 1,
+        limit: limit || Consts.DEFAULT_PAGING_ELEMENT_LIMIT,
+    };
+
+    const response = await Author.paginate({}, options);
+    return response;
+};

@@ -1,4 +1,5 @@
 const User = require('../../models/user');
+const Consts = require("../../consts/consts");
 
 
 exports.findUserByID = async (userId) => {
@@ -31,4 +32,14 @@ exports.findByNickName = async (nickName) => {
     return false;
   }
   return user;
+};
+
+exports.getUsers = async (limit, page) => {
+  const options = {
+      page: page || 1,
+      limit: limit || Consts.DEFAULT_PAGING_ELEMENT_LIMIT,
+  };
+
+  const response = await User.paginate({}, options);
+  return response;
 };
