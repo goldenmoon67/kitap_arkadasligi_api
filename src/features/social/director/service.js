@@ -44,3 +44,18 @@ exports.listDirectors = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getDirector = async (req, res, next) => {
+    try {
+        
+        const directorId=req.params.directorId;
+        const response = await handler.findById(directorId);
+        return res.status(200).json(response);
+
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};

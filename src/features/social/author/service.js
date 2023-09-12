@@ -43,3 +43,18 @@ exports.listAuthors = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getAuthor = async (req, res, next) => {
+    try {
+        
+        const authorId=req.params.authorId;
+        const response = await handler.findById(authorId);
+        return res.status(200).json(response);
+
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};

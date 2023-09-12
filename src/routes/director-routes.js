@@ -20,4 +20,9 @@ router.get('/directors/:limit?/:page?',
     directorService.listDirectors
 );
 
+//GET DIRECTOR{ID}
+router.get('/directors/:directorId',
+    authService.authenticate,
+    directorService.getDirector,
+)
 module.exports = router;

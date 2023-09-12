@@ -19,4 +19,10 @@ router.get('/authors/:limit?/:page?',
     authorService.listAuthors
 );
 
+//GET AUTHOR{ID}
+router.get('/authors/:authorId',
+    authService.authenticate,
+    authorService.getAuthor,
+)
+
 module.exports = router;

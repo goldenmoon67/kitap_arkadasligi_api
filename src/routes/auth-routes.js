@@ -18,7 +18,14 @@ router.post('/verify-email', [
 ],
     registerService.verifyEmail
 );
-
+//RESET PASSWORD
+router.post('/reset-password',
+    [
+        authValidator.emailValidator,
+    ],
+    authService.authenticate,
+    registerService.resetPassword,
+);
 //LOGIN
 router.post('/login',
     [
