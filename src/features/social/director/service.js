@@ -1,9 +1,9 @@
 
-const Author = require("../../../models/common/author");
+const Director = require("../../../models/common/director");
 const handler = require("./handler");
 const { validationResult } = require("express-validator");
 
-exports.createAuthor = async (req, res, next) => {
+exports.createDirector = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -12,14 +12,14 @@ exports.createAuthor = async (req, res, next) => {
             error.data = errors.array();
             throw error;
         }
-        const AuthorObject = new Author({
+        const DirectorObject = new Director({
             fullName: req.body.fullName,
             imageUrl: req.body.imageUrl,
             
         });
 
-        const response = await handler.createAuthor(AuthorObject);
-        return res.status(201).json({ createdTime: response.createdAt, authorId: response.id });
+        const response = await handler.createDirector(DirectorObject);
+        return res.status(201).json({ createdTime: response.createdAt, directorId: response.id });
 
     } catch (error) {
         if (!error.statusCode) {
@@ -28,12 +28,13 @@ exports.createAuthor = async (req, res, next) => {
         next(error);
     }
 };
-exports.listAuthors = async (req, res, next) => {
+
+exports.listDirectors = async (req, res, next) => {
     try {
         
         const limit=req.query.limit;
         const page=req.query.page
-        const response = await handler.getAuthors(limit,page);
+        const response = await handler.getDirectors(limit,page);
         return res.status(200).json(response);
 
     } catch (error) {
@@ -44,11 +45,11 @@ exports.listAuthors = async (req, res, next) => {
     }
 };
 
-exports.getAuthor = async (req, res, next) => {
+exports.getDirector = async (req, res, next) => {
     try {
         
-        const authorId=req.params.authorId;
-        const response = await handler.findById(authorId);
+        const directorId=req.params.directorId;
+        const response = await handler.findById(directorId);
         return res.status(200).json(response);
 
     } catch (error) {
