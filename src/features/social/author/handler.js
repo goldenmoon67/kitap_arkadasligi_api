@@ -39,3 +39,13 @@ exports.getAuthors = async (limit, page) => {
     const response = await Author.paginate({}, options);
     return response;
 };
+
+exports.createAuthorForDB = async (authorName, imageUrl, description) => {
+    const isExisting = await this.findByName(authorName);
+
+    if (isExisting) {
+        return isExisting;
+    }
+    const response = await Author.create({ fullName: authorName, imageUrl: imageUrl, description: description });
+    return response;
+};

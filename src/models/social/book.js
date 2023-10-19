@@ -21,7 +21,6 @@ const dataSchema = new mongoose.Schema({
         type: String,
     },
     pageCount: {
-        required:true,
         type: Number,
     },
     categories: {
@@ -40,6 +39,9 @@ const dataSchema = new mongoose.Schema({
     rates: {
         type: Number,
         default: 0,
+    },
+    orginalName: {
+        type: String,
     },
 },{ timestamps: true });
 dataSchema.plugin(mongoosePaginate);

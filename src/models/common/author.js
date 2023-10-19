@@ -21,6 +21,9 @@ const dataSchema = new mongoose.Schema({
     rates: {
         type: Number,
         default: 0,
+    },   
+     description: {
+        type: String,
     },
 },{ timestamps: true });
 dataSchema.plugin(mongoosePaginate);

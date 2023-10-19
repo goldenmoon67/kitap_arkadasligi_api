@@ -114,3 +114,17 @@ exports.getBooks = async (limit, page) => {
     const response = await Book.paginate({}, options);
     return response;
 };
+exports.createBookForDBConvert = async (BookObject, authorName) => {
+    const isExisting = await this.findByName(BookObject.name);
+
+    if (isExisting) {
+        return null;
+    }
+    const authorResponse = await authorHandler.createAuthorForDB(authorName);
+    const author = await authorHandler.findById(authorResponse.id);
+    BookObject.author=authorResponse.id;
+    const response = await Book.create(BookObject);
+    author.books.push(response._id);
+    author.save();
+    return response;
+};

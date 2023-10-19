@@ -11,6 +11,7 @@ const commonValidator = require("../validators/common");
 const authorValidator = require("../validators/author");
 const authorService = require("../features/social/author/service");
 const userValidator = require("../validators/user");
+const importBookService=require("../features/database_importing/import_books/import_book");
 //REGISTER
 router.post('/register', [authValidator.emailValidator], registerService.sendRegisterMail);
 
@@ -101,5 +102,19 @@ router.get('/authors/:limit?/:page?',
     authService.authenticate,
     authorService.listAuthors
 );
+const multer = require('multer')
 
+var excelStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './public/excelUploads');      // file added to the public folder of the root directory
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+});
+
+
+var excelUploads = multer({ storage: excelStorage });
+
+router.post('/uploadExcelFile', excelUploads.single("uploadfile"),importBookService.importCSV2MongoDB);
 module.exports = router;
