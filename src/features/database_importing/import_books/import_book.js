@@ -18,7 +18,6 @@ exports.importCSV2MongoDB = (req, res,next) => {
 
                     for (var j = 0; j <categoriesJSON.length; j++) {
                         var item = categoriesJSON[j];
-                        console.log(item)
                         if(item!=null){
                             categories.push(item["categories"]);
 
@@ -29,8 +28,17 @@ exports.importCSV2MongoDB = (req, res,next) => {
                 var authorName = source[i]["yazarname"];
                 var authorDesc = source[i]["yazardesc"];
                 var authorImageResponse = source[i]["yazarid"];
-                var authorImageUrl=authorImageResponse//TODO::burada bi ayristirma olacak
+                var authorImageUrl=authorImageResponse.substring(22)//TODO::burada bi ayristirma olacak
+                authorImageUrl=authorImageUrl.substring(0, authorImageUrl.length - 1);
+                if(!authorName){
+                    continue;
+                }
+                if(authorImageResponse==""){
+                    authorImageUrl=null;
+                }
+                console.log(authorName);
                 var author= await authorHandler.createAuthorForDB(authorName,authorImageUrl,authorDesc);
+                console.log(author);
                 var singleRow = {
                     name: source[i]["name"],
                     author:author.id,

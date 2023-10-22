@@ -8,7 +8,6 @@ const authValidator = require("../validators/auth");
 const bookService = require("../../src/features/social/book/service");
 const bookValidator = require("../validators/book");
 const commonValidator = require("../validators/common");
-const authorValidator = require("../validators/author");
 const authorService = require("../features/social/author/service");
 const userValidator = require("../validators/user");
 const importBookService=require("../features/database_importing/import_books/import_book");
@@ -48,7 +47,7 @@ router.put('/update-profile',
 //CREATE AUTHOR
 router.post('/authors', [
     commonValidator.imageUrlValidator,
-    authorValidator.fullNameValidator,
+    commonValidator.fullNameValidator,
 ],
     authService.authenticate,
     authorService.createAuthor

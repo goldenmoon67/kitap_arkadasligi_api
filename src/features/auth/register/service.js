@@ -85,3 +85,42 @@ exports.verifyEmail = async  (req, res,next) => {
     }
 
 }; 
+
+
+exports.resetPassword = async  (req, res,next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const error =  new Error("Validation failed");
+            error.statusCode=422;
+            error.data=errors.array();
+            throw error;
+        }
+        const isExisting = await handler.findUserByEmail(req.body.email);
+        if (!isExisting) {
+            const error = new Error("Email does not found");
+            error.statusCode = 422;
+            throw error;
+        }
+        const otpGenerated = await handler.generateOTP();
+        const newUser = await handler.createUserRegisterModel(req.body.email, otpGenerated);
+        if (!newUser[0]) {
+            const error = new Error("OTP code can not be generated. Please try again later");
+            error.statusCode = 422;
+            throw error;
+        }
+      
+        const emailResponse = await handler.sendMail(req.body.email, otpGenerated);
+
+        return res.status(201).json({
+            createdTime: emailResponse.createdTime,
+        });
+
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+
+}; 
