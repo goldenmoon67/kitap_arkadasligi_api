@@ -2,11 +2,11 @@ const Author = require("../../../models/common/author");
 const Consts = require("../../../consts/consts");
 
 
-exports.createAuthor = async (AuthorObject) => {
+exports.createAuthor = async (AuthorObject,errorMessage) => {
     const isExisting = await this.findByName(AuthorObject.fullName);
 
     if (isExisting) {
-        const error = new Error("Already exist.");
+        const error = new Error(errorMessage);
         error.statusCode = 500;
         throw error;
     }

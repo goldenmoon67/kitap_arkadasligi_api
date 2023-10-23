@@ -12,13 +12,13 @@ exports.findUserByID = async (userId) => {
   return user;
 };
 
-exports.updateUser = async (updatedData) => {
+exports.updateUser = async (updatedData,errorMessage) => {
   const userId = updatedData.userId;
   const updatedUser = await User.findOneAndUpdate({
     userId
   }, updatedData);
   if (!updatedUser) {
-    const error = new Error("User does not exists");
+    const error = new Error(errorMessage);
     error.statusCode = 404;
     throw error;
   }

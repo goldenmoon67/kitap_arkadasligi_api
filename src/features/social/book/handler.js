@@ -3,17 +3,17 @@ const userhandler = require("../../user/handler");
 const authorHandler = require("../author/handler");
 const Consts = require("../../../consts/consts");
 
-exports.createBook = async (BookObject, authorId) => {
+exports.createBook = async (BookObject, authorId,errorMessagesObject) => {
     const isExisting = await this.findByName(BookObject.name);
 
     if (isExisting) {
-        const error = new Error("Already exist.");
+        const error = new Error(errorMessagesObject.bookExists);
         error.statusCode = 500;
         throw error;
     }
     const author = await authorHandler.findById(authorId);
     if (!author) {
-        const error = new Error("Author is not exists");
+        const error = new Error(errorMessagesObject.authorNotFound);
         error.statusCode = 422;
         throw error;
     }
@@ -30,40 +30,40 @@ exports.findByName = async (name) => {
     return book;
 };
 
-exports.findById = async (_id) => {
+exports.findById = async (_id,errorMessage) => {
 
     const book = await Book.findById({
         _id,
     }).populate("author")
         ;
     if (!book) {
-        const error = new Error("Forbidden Resource book.");
+        const error = new Error(errorMessage);
         error.statusCode = 500;
         throw error;
     }
     return book;
 };
 
-exports.readABook = async (bookId, userId) => {
-    const book = await this.findById(bookId);
+exports.readABook = async (bookId, userId,errorMessagesObject) => {
+    const book = await this.findById(bookId,errorMessagesObject.forbiddenBook);
 
     const user = await userhandler.findUserByID(userId);
 
     if (!book) {
-        const error = new Error("Forbidden Resource Book.");
+        const error = new Error(errorMessagesObject.forbiddenBook);
         error.statusCode = 500;
         throw error;
     }
 
     if (!user) {
-        const error = new Error("Forbidden Resource User.");
+        const error = new Error(errorMessagesObject.forbiddenUser);
         error.statusCode = 500;
         throw error;
     }
 
     const wasRead = book.readBy.includes(userId);
     if (wasRead) {
-        const error = new Error("This book already read by this user");
+        const error = new Error(errorMessagesObject.alreadyRead);
         error.statusCode = 403;
         throw error;
     }
@@ -74,26 +74,26 @@ exports.readABook = async (bookId, userId) => {
 
 };
 
-exports.removeReadBook = async (bookId, userId) => {
-    const book = await this.findById(bookId);
+exports.removeReadBook = async (bookId, userId,errorMessagesObject) => {
+    const book = await this.findById(bookId,errorMessagesObject.forbiddenBook);
 
     const user = await userhandler.findUserByID(userId);
 
     if (!book) {
-        const error = new Error("Forbidden Resource Book.");
+        const error = new Error(errorMessagesObject.forbiddenBook);
         error.statusCode = 500;
         throw error;
     }
 
     if (!user) {
-        const error = new Error("Forbidden Resource User.");
+        const error = new Error(errorMessagesObject.forbiddenUser);
         error.statusCode = 500;
         throw error;
     }
 
     const wasRead = book.readBy.includes(userId);
     if (!wasRead) {
-        const error = new Error("This user did not read this book");
+        const error = new Error(errorMessagesObject.userDidNotRead);
         error.statusCode = 403;
         throw error;
     }

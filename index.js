@@ -5,11 +5,20 @@ const routes = require('./src/routes/routes');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const mongoString = process.env.DATABASE_URL;
-
+const i18next=require("i18next");
+const Backend=require("i18next-fs-backend");
+const middleware=require("i18next-http-middleware");
+i18next.use(Backend).use(middleware.LanguageDetector).
+init({
+  fallbackLng:'en',
+  backend:{
+    loadPath:'./locales/{{lng}}/translation.json'
+  }
+})
 //firebase, express and database init
 firebase.initFirebaseAdmin();
 const app = express();
-
+app.use(middleware.handle(i18next));
 //database connection
 mongoose.connect(mongoString);
 const database = mongoose.connection;

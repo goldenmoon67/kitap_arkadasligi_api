@@ -1,15 +1,21 @@
 const { body } = require('express-validator');
 
 exports.nameValidator = body("name")
-.isLength({min:3}).withMessage("Name should not be emty and less then 3 character")
+.isLength({min:3})
 .not().isEmpty()
-.withMessage("Name should not be emty and less then 3 character");
+.withMessage((value, { req, location, path }) => {
+    return req.t( "valid-name-message");
+  });
 
 
 exports.imageUrlValidator= body('imageUrl').optional()
-.isURL().withMessage("ImageUrl should be an Url");
+.isURL().withMessage((value, { req, location, path }) => {
+    return req.t( "valid-image-url-message");
+  });
 
 exports.fullNameValidator = body("fullName")
-.isLength({min:3}).withMessage("Name should be more then 3 character")
+.isLength({min:3})
 .not().isEmpty()
-.withMessage("Name should not be emty");
+.withMessage((value, { req, location, path }) => {
+    return req.t("valid-name-message");
+  });

@@ -8,6 +8,7 @@ const firebase = require("../../../utils/firebase-admin");
 const htmlConsts = require("../../../consts/consts");
 const { otpGen } = require('otp-gen-agent');
 require('dotenv').config();
+const consts=require("../../../consts/consts");
 const api_key = process.env.SENDGRID_API_KEY;
 const transporter = nodemailer.createTransport(sendgridTransport(
     {
@@ -19,7 +20,7 @@ const transporter = nodemailer.createTransport(sendgridTransport(
 
 
 
-exports.createUser = async (email, password) => {
+exports.createUser = async (email, password,errorMessage) => {
     const userResponse = await firebase.admin.auth().createUser({
         email: email,
         password: password,
@@ -27,7 +28,7 @@ exports.createUser = async (email, password) => {
         disabled: false
     });
     if (!userResponse) {
-        const error = new Error("Unable to registered.");
+        const error = new Error(errorMessage);
         error.statusCode = 500;
         throw error;
     }
@@ -66,17 +67,17 @@ exports.findRegisterModelByEmail = async (email) => {
 };
 
 
-exports.sendMail = async (email, otpCode) => {
+exports.sendMail = async (email, otpCode,subjectMessage,htmlBodyObject) => {
     const response = await transporter.sendMail({
         to: email,
-        from: "mirac@z2h.it",
-        subject: "E-posta adresinizi doğrulayın",
-        html: htmlConsts.VERIFYMAILHTML(otpCode),
+        from: consts.DEFAULT_SENDGRID_EMAIL_ADDRESS,
+        subject:subjectMessage,
+        html: htmlConsts.VERIFYMAILHTML(otpCode,htmlBodyObject),
     });
     return response;
 };
 
-exports.createUserRegisterModel = async (email, otpCode) => {
+exports.createUserRegisterModel = async (email, otpCode,errorMessage) => {
     const otpGenerated = otpCode;
 
     const isExisting = await this.findRegisterModelByEmail(email);
@@ -90,7 +91,7 @@ exports.createUserRegisterModel = async (email, otpCode) => {
 
                 });
         if (!updatedUser) {
-            const error = new Error('Unable to sign you up');
+            const error = new Error(errorMessage);
             error.statusCode = 500;
             throw error;
         }
@@ -102,7 +103,7 @@ exports.createUserRegisterModel = async (email, otpCode) => {
         otpCode: otpGenerated,
     });
     if (!newUser) {
-        const error = new Error('Unable to sign you up');
+        const error = new Error(errorMessage);
         error.statusCode = 500;
         throw error;
     }
