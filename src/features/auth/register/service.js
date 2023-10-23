@@ -6,14 +6,14 @@ exports.sendRegisterMail = async  (req, res,next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const error =  new Error("Validation failed");
+            const error =  new Error(req.t("validation-failed"));
             error.statusCode=422;
             error.data=errors.array();
             throw error;
         }
         const isExisting = await handler.findUserByEmail(req.body.email);
         if (isExisting) {
-            const error = new Error("Email already exists");
+            const error = new Error(req.t( "email-already-exists"));
             error.statusCode = 422;
             throw error;
         }
@@ -40,7 +40,7 @@ exports.verifyEmail = async  (req, res,next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const error =  new Error("Validation failed");
+            const error =  new Error(req.t("validation-failed"));
             error.statusCode=422;
             error.data=errors.array();
             throw error;
@@ -49,13 +49,13 @@ exports.verifyEmail = async  (req, res,next) => {
 
         const registerModel = await handler.findRegisterModelByEmail(req.body.email);
         if (!registerModel) {
-            const error = new Error("Email was not registered");
+            const error = new Error(req.t( "email-was-not-registered"));
             error.statusCode = 403;
             throw error;
         }
         const isCodeTrue = otpCode === registerModel.otpCode;
         if (!isCodeTrue) {
-            const error = new Error("Invalid OTP code");
+            const error = new Error(req.t( "invalid-OTP-code"));
             error.statusCode = 422;
             throw error;
         }
@@ -65,12 +65,12 @@ exports.verifyEmail = async  (req, res,next) => {
         if (isPassed) {
             const otpGenerated = await handler.generateOTP();
             await handler.sendMail(email, otpGenerated);
-            await handler.createUserRegisterModel(email, otpGenerated);
-            const error = new Error("The OTP code has expired. We have sent a new email. Please check your inbox");
+            await handler.createUserRegisterModel(email, otpGenerated,req.t( "unable-to-sign-up"));
+            const error = new Error(req.t("otp-code-expired"));
             error.statusCode = 422;
             throw error;
         }
-        const response = await handler.createUser(email, password);
+        const response = await handler.createUser(email, password,req.t("unable-to-registered"));
 
         return res.status(201).json({
             userId: response.userId,
@@ -91,26 +91,33 @@ exports.resetPassword = async  (req, res,next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const error =  new Error("Validation failed");
+            const error =  new Error(req.t("validation-failed"));
             error.statusCode=422;
             error.data=errors.array();
             throw error;
         }
         const isExisting = await handler.findUserByEmail(req.body.email);
         if (!isExisting) {
-            const error = new Error("Email does not found");
+            const error = new Error(req.t("email-does-not-found"));
             error.statusCode = 422;
             throw error;
         }
         const otpGenerated = await handler.generateOTP();
-        const newUser = await handler.createUserRegisterModel(req.body.email, otpGenerated);
+        const newUser = await handler.createUserRegisterModel(req.body.email, otpGenerated,req.t( "unable-to-sign-up"));
         if (!newUser[0]) {
-            const error = new Error("OTP code can not be generated. Please try again later");
+            const error = new Error(req.t( "otp-can-not-generated"));
             error.statusCode = 422;
             throw error;
         }
-      
-        const emailResponse = await handler.sendMail(req.body.email, otpGenerated);
+        const htmlBodyObject={
+            h1:req.t("verify-email-html-body-header-h1"), 
+            contentP1:req.t("erify-email-html-body-content-p1"),
+            contentP2:req.t("erify-email-html-body-content-p2"), 
+            contentP3:req.t("verify-email-html-body-content-p3"),
+            contentP4:req.t("verify-email-html-body-content-p4"), 
+            footer:req.t("verify-email-html-body-footer-p")
+        };
+        const emailResponse = await handler.sendMail(req.body.email, otpGenerated,req.t("verify-email-subject-message"),htmlBodyObject);
 
         return res.status(201).json({
             createdTime: emailResponse.createdTime,

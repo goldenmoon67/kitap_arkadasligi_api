@@ -1,9 +1,9 @@
-exports.VERIFYMAILHTML=(otpCode)=>{
+exports.VERIFYMAILHTML=(otpCode,bodyObject)=>{
     return `<!DOCTYPE html>
     <html>
     <head>
         <meta charset="UTF-8">
-        <title>E-posta Doğrulama</title>
+        <title>${bodyObject.h1}</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -49,17 +49,17 @@ exports.VERIFYMAILHTML=(otpCode)=>{
     <body>
         <div class="container">
             <div class="header">
-                <h1>E-posta Doğrulama</h1>
+                <h1>${bodyObject.h1}</h1>
             </div>
             <div class="content">
-                <p>Merhaba,</p>
-                <p>Hesabınızı doğrulamak için aşağıdaki OTP (One-Time Password) kodunu kullanabilirsiniz:</p>
+                <p>${bodyObject.contentP1}</p>
+                <p>${bodyObject.contentP2}</p>
                 <div class="otp-code">${otpCode}</div>
-                <p>Bu kod sadece bir kez kullanılabilir ve 10 dakika boyunca geçerlidir.</p>
-                <p>İyi günler dileriz!</p>
+                <p>${bodyObject.contentP3}</p>
+                <p>${bodyObject.contentP4}</p>
             </div>
             <div class="footer">
-                <p>Bu bir otomatik e-posta mesajıdır, lütfen yanıtlamayınız.</p>
+                <p>${bodyObject.footer}</p>
             </div>
         </div>
     </body>
@@ -79,3 +79,6 @@ exports.firebaseConfigs={
 }
 
 exports.DEFAULT_PAGING_ELEMENT_LIMIT=10;
+
+exports.DEFAULT_SENDGRID_EMAIL_ADDRESS= "mirac@z2h.it";
+

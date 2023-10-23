@@ -5,7 +5,6 @@ const registerService = require('../../src/features/auth/register/service');
 const loginService = require('../../src/features/auth/login/service');
 const authService = require('../features/auth/login/handler');
 
-
 //REGISTER
 router.post('/register', [authValidator.emailValidator],
  registerService.sendRegisterMail);
@@ -27,10 +26,10 @@ router.post('/reset-password',
     registerService.resetPassword,
 );
 //LOGIN
-router.post('/login',
+router.post('/login', 
     [
         authValidator.emailValidator,
-    ],
+    ],   
     loginService.login
 );
 module.exports = router;

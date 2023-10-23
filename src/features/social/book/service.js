@@ -8,7 +8,7 @@ exports.createBook = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const error = new Error("Validation failed");
+            const error = new Error(req.t("validation-failed"));
             error.statusCode = 422;
             error.data = errors.array();
             throw error;
@@ -22,7 +22,7 @@ exports.createBook = async (req, res, next) => {
             pageCount: req.body.pageCount,
 
         });
-        const response = await bookHandler.createBook(BookObject, req.body.author);
+        const response = await bookHandler.createBook(BookObject, req.body.author,{bookExists:req.t("already-exists"),authorNotFound:"author-is-not-exists"});
 
         return res.status(201).json({ createdTime: response.createdAt, bookId: response.id });
 
@@ -53,7 +53,7 @@ exports.bookDetail = async (req, res, next) => {
     try {
         const bookId = req.params.id;
 
-        const response = await bookHandler.findById(bookId);
+        const response = await bookHandler.findById(bookId,req.t("forbidden-book"));
 
         return res.status(200).json(response);
 
@@ -69,7 +69,7 @@ exports.readABook = async (req, res, next) => {
 
         const bookId = req.params.bookId;
         const userId = req.user.user_id;
-        const result = await bookHandler.readABook(bookId, userId);
+        const result = await bookHandler.readABook(bookId, userId, {forbiddenBook:req.t("forbidden-book"), forbiddenUser:req.t("forbidden-user"), alreadyRead:req.t("already-read-this-book")});
         return res.status(201).json();
 
     } catch (error) {
@@ -84,7 +84,7 @@ exports.removeReadBook = async (req, res, next) => {
     try {
         const bookId = req.params.bookId;
         const userId = req.user.user_id;
-        const result = await bookHandler.removeReadBook(bookId, userId);
+        const result = await bookHandler.removeReadBook(bookId, userId,{forbiddenBook:req.t("forbidden-book"), forbiddenUser:req.t("forbidden-user"), userDidNotRead:req.t( "user-did-not-read-this-book")});
         return res.status(201).json();
 
     } catch (error) {

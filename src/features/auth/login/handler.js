@@ -8,7 +8,7 @@ exports.authenticate = async (req, res, next) => {
         var token;
         const idToken = req.headers.authorization
         if (!idToken) {
-            const error = new Error("Unauthorized");
+            const error = new Error(req.t('bearer-token-is-not-auth'));
             error.statusCode = 401;
             throw error;
         }
@@ -17,6 +17,8 @@ exports.authenticate = async (req, res, next) => {
         req.user = decodedToken;
         next();
     } catch (err) {
+        const message=req.t('bearer-token-is-not-auth');
+        err.message=message;
         if (!err.statusCode) {
             err.statusCode = 500;
         }

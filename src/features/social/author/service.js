@@ -7,7 +7,7 @@ exports.createAuthor = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const error = new Error("Validation failed");
+            const error = new Error(req.t("validation-failed"));
             error.statusCode = 422;
             error.data = errors.array();
             throw error;
@@ -18,9 +18,8 @@ exports.createAuthor = async (req, res, next) => {
             
         });
 
-        const response = await handler.createAuthor(AuthorObject);
+        const response = await handler.createAuthor(AuthorObject,req.t( "already-exists"));
         return res.status(201).json({ createdTime: response.createdAt, authorId: response.id });
-
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;

@@ -5,7 +5,7 @@ exports.createDirector = async (DirectorObject) => {
     const isExisting = await this.findByName(DirectorObject.fullName);
 
     if (isExisting) {
-        const error = new Error("Already exist.");
+        const error = new Error(req.t("already-exists"));
         error.statusCode = 500;
         throw error;
     }
