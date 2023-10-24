@@ -114,6 +114,18 @@ exports.getBooks = async (limit, page) => {
     const response = await Book.paginate({}, options);
     return response;
 };
+
+exports.getUserBooks = async (limit, page,userId) => {
+    const options = {
+        page: page || 1,
+        limit: limit || Consts.DEFAULT_PAGING_ELEMENT_LIMIT,
+
+    };
+
+    const response = await Book.paginate({ "readBy": userId}, options);
+    return response;
+};
+
 exports.createBookForDBConvert = async (BookObject, authorName) => {
     const isExisting = await this.findByName(BookObject.name);
 

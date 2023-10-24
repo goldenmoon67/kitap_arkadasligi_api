@@ -66,7 +66,7 @@ exports.bookDetail = async (req, res, next) => {
 };
 exports.readABook = async (req, res, next) => {
     try {
-
+        
         const bookId = req.params.bookId;
         const userId = req.user.user_id;
         const result = await bookHandler.readABook(bookId, userId, {forbiddenBook:req.t("forbidden-book"), forbiddenUser:req.t("forbidden-user"), alreadyRead:req.t("already-read-this-book")});
@@ -86,6 +86,26 @@ exports.removeReadBook = async (req, res, next) => {
         const userId = req.user.user_id;
         const result = await bookHandler.removeReadBook(bookId, userId,{forbiddenBook:req.t("forbidden-book"), forbiddenUser:req.t("forbidden-user"), userDidNotRead:req.t( "user-did-not-read-this-book")});
         return res.status(201).json();
+
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.listUserBooks = async (req, res, next) => {
+    try {
+        const limit = req.query.limit;
+        const page = req.query.page
+        var userId = req.params.id;
+        if (!userId) {
+            userId = req.user.user_id;
+
+        }
+        const response = await bookHandler.getUserBooks(limit, page,userId);
+        return res.status(200).json(response);
 
     } catch (error) {
         if (!error.statusCode) {

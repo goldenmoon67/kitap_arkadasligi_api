@@ -43,6 +43,19 @@ router.get('/books/:limit?/:page?',
     bookService.listBooks
 );
 
+//GET MY BOOK LIST
+router.get('/users/my-books',
+    authService.authenticate,
+    bookService.listUserBooks
+);
+
+//GET USER {userId} BOOK LIST
+router.get('/users/:userId/books',
+    authService.authenticate,
+    bookService.listUserBooks
+);
+
+
 
 
 module.exports = router;

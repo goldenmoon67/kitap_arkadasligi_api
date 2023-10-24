@@ -36,9 +36,7 @@ exports.importCSV2MongoDB = (req, res,next) => {
                 if(authorImageResponse==""){
                     authorImageUrl=null;
                 }
-                console.log(authorName);
                 var author= await authorHandler.createAuthorForDB(authorName,authorImageUrl,authorDesc);
-                console.log(author);
                 var singleRow = {
                     name: source[i]["name"],
                     author:author.id,

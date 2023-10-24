@@ -8,7 +8,6 @@ firebase.initializeApp(consts.firebaseConfigs);
 
 exports.login = async (req, res, next) => {
     try {
-        console.log("alsşdkşlsakd")
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
