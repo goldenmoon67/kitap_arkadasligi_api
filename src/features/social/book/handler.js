@@ -3,7 +3,7 @@ const userhandler = require("../../user/handler");
 const authorHandler = require("../author/handler");
 const Consts = require("../../../consts/consts");
 
-exports.createBook = async (BookObject, authorId,errorMessagesObject) => {
+exports.createBook = async (BookObject, authorId, errorMessagesObject) => {
     const isExisting = await this.findByName(BookObject.name);
 
     if (isExisting) {
@@ -30,12 +30,15 @@ exports.findByName = async (name) => {
     return book;
 };
 
-exports.findById = async (_id,errorMessage) => {
+exports.findById = async (_id, errorMessage) => {
 
     const book = await Book.findById({
         _id,
-    }).populate("author")
-        ;
+    }).populate({
+        path: "author",
+        select: "fullName imageUrl"
+    })
+        
     if (!book) {
         const error = new Error(errorMessage);
         error.statusCode = 500;
@@ -44,8 +47,8 @@ exports.findById = async (_id,errorMessage) => {
     return book;
 };
 
-exports.readABook = async (bookId, userId,errorMessagesObject) => {
-    const book = await this.findById(bookId,errorMessagesObject.forbiddenBook);
+exports.readABook = async (bookId, userId, errorMessagesObject) => {
+    const book = await this.findById(bookId, errorMessagesObject.forbiddenBook);
 
     const user = await userhandler.findUserByID(userId);
 
@@ -74,8 +77,8 @@ exports.readABook = async (bookId, userId,errorMessagesObject) => {
 
 };
 
-exports.removeReadBook = async (bookId, userId,errorMessagesObject) => {
-    const book = await this.findById(bookId,errorMessagesObject.forbiddenBook);
+exports.removeReadBook = async (bookId, userId, errorMessagesObject) => {
+    const book = await this.findById(bookId, errorMessagesObject.forbiddenBook);
 
     const user = await userhandler.findUserByID(userId);
 
@@ -109,20 +112,30 @@ exports.getBooks = async (limit, page) => {
     const options = {
         page: page || 1,
         limit: limit || Consts.DEFAULT_PAGING_ELEMENT_LIMIT,
+        populate: [{
+            path: "author",
+            select: "fullName imageUrl"
+        }],
+        select: '_id name pageCount categories readBy comments rates orginalName',
+
+
     };
 
     const response = await Book.paginate({}, options);
     return response;
 };
 
-exports.getUserBooks = async (limit, page,userId) => {
+exports.getUserBooks = async (limit, page, userId) => {
     const options = {
         page: page || 1,
         limit: limit || Consts.DEFAULT_PAGING_ELEMENT_LIMIT,
-
+        populate: [{
+            path: "author",
+            select: "fullName imageUrl"
+        }],
     };
 
-    const response = await Book.paginate({ "readBy": userId}, options);
+    const response = await Book.paginate({ "readBy": userId }, options);
     return response;
 };
 
@@ -134,7 +147,7 @@ exports.createBookForDBConvert = async (BookObject, authorName) => {
     }
     const authorResponse = await authorHandler.createAuthorForDB(authorName);
     const author = await authorHandler.findById(authorResponse.id);
-    BookObject.author=authorResponse.id;
+    BookObject.author = authorResponse.id;
     const response = await Book.create(BookObject);
     author.books.push(response._id);
     author.save();
