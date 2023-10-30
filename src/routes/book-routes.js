@@ -55,6 +55,16 @@ router.get('/users/:userId/books',
     bookService.listUserBooks
 );
 
+//PUT COMMENT TO BOOK
+router.put('/books/:bookId/comment',[
+    commonValidator.commentTextValidator,
+
+],
+    authService.authenticate,
+    bookService.commentToBook
+);
+
+
 
 
 

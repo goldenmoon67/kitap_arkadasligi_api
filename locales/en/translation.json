@@ -32,5 +32,6 @@
     "valid-name-message":"Name should not be emty and less then 3 character",
     "valid-image-url-message":"ImageUrl should be an Url",
     "valid-nickname-message":"nickName should not be less then 3 character",
-    "nickname-already-taken":"This nickname is already taken."
+    "nickname-already-taken":"This nickname is already taken.",
+    "valid-comment-message":"Comment should not be empty"
 }

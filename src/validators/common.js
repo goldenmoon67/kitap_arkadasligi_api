@@ -19,3 +19,10 @@ exports.fullNameValidator = body("fullName")
 .withMessage((value, { req, location, path }) => {
     return req.t("valid-name-message");
   });
+
+  exports.commentTextValidator = body("comment")
+.not().isEmpty()
+.withMessage((value, { req, location, path }) => {
+    return req.t("valid-comment-message");
+  });
+

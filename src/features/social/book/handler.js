@@ -2,7 +2,7 @@ const Book = require("../../../models/social/book");
 const userhandler = require("../../user/handler");
 const authorHandler = require("../author/handler");
 const Consts = require("../../../consts/consts");
-
+const commentHandler=require("../../social/comment/handler");
 exports.createBook = async (BookObject, authorId, errorMessagesObject) => {
     const isExisting = await this.findByName(BookObject.name);
 
@@ -137,6 +137,29 @@ exports.getUserBooks = async (limit, page, userId) => {
 
     const response = await Book.paginate({ "readBy": userId }, options);
     return response;
+};
+
+exports.commentToBook = async (bookId, userId,comment, errorMessagesObject) => {
+    const book = await this.findById(bookId, errorMessagesObject.forbiddenBook);
+
+    const user = await userhandler.findUserByID(userId);
+
+    if (!book) {
+        const error = new Error(errorMessagesObject.forbiddenBook);
+        error.statusCode = 500;
+        throw error;
+    }
+
+    if (!user) {
+        const error = new Error(errorMessagesObject.forbiddenUser);
+        error.statusCode = 500;
+        throw error;
+    }
+
+    const createdComment=await commentHandler.createComment(comment,userId,errorMessagesObject.forbiddenUser);
+    book.comments.push(createdComment._id);
+    await book.save();
+    
 };
 
 exports.createBookForDBConvert = async (BookObject, authorName) => {

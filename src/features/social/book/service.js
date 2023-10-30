@@ -22,7 +22,7 @@ exports.createBook = async (req, res, next) => {
             pageCount: req.body.pageCount,
 
         });
-        const response = await bookHandler.createBook(BookObject, req.body.author,{bookExists:req.t("already-exists"),authorNotFound:"author-is-not-exists"});
+        const response = await bookHandler.createBook(BookObject, req.body.author, { bookExists: req.t("already-exists"), authorNotFound: "author-is-not-exists" });
 
         return res.status(201).json({ createdTime: response.createdAt, bookId: response.id });
 
@@ -53,7 +53,7 @@ exports.bookDetail = async (req, res, next) => {
     try {
         const bookId = req.params.id;
 
-        const response = await bookHandler.findById(bookId,req.t("forbidden-book"));
+        const response = await bookHandler.findById(bookId, req.t("forbidden-book"));
 
         return res.status(200).json(response);
 
@@ -66,10 +66,10 @@ exports.bookDetail = async (req, res, next) => {
 };
 exports.readABook = async (req, res, next) => {
     try {
-        
+
         const bookId = req.params.bookId;
         const userId = req.user.user_id;
-        const result = await bookHandler.readABook(bookId, userId, {forbiddenBook:req.t("forbidden-book"), forbiddenUser:req.t("forbidden-user"), alreadyRead:req.t("already-read-this-book")});
+        const result = await bookHandler.readABook(bookId, userId, { forbiddenBook: req.t("forbidden-book"), forbiddenUser: req.t("forbidden-user"), alreadyRead: req.t("already-read-this-book") });
         return res.status(201).json();
 
     } catch (error) {
@@ -84,7 +84,7 @@ exports.removeReadBook = async (req, res, next) => {
     try {
         const bookId = req.params.bookId;
         const userId = req.user.user_id;
-        const result = await bookHandler.removeReadBook(bookId, userId,{forbiddenBook:req.t("forbidden-book"), forbiddenUser:req.t("forbidden-user"), userDidNotRead:req.t( "user-did-not-read-this-book")});
+        const result = await bookHandler.removeReadBook(bookId, userId, { forbiddenBook: req.t("forbidden-book"), forbiddenUser: req.t("forbidden-user"), userDidNotRead: req.t("user-did-not-read-this-book") });
         return res.status(201).json();
 
     } catch (error) {
@@ -104,8 +104,30 @@ exports.listUserBooks = async (req, res, next) => {
             userId = req.user.user_id;
 
         }
-        const response = await bookHandler.getUserBooks(limit, page,userId);
+        const response = await bookHandler.getUserBooks(limit, page, userId);
         return res.status(200).json(response);
+
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+exports.commentToBook = async (req, res, next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const error = new Error(req.t("validation-failed"));
+            error.statusCode = 422;
+            error.data = errors.array();
+            throw error;
+        }
+        const bookId = req.params.bookId;
+        const userId = req.user.user_id;
+        const comment=req.body.comment;
+        const result = await bookHandler.commentToBook(bookId, userId,comment, { forbiddenBook: req.t("forbidden-book"), forbiddenUser: req.t("forbidden-user") });
+        return res.status(201).json();
 
     } catch (error) {
         if (!error.statusCode) {

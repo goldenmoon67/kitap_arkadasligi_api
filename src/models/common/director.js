@@ -23,6 +23,7 @@ const dataSchema = new mongoose.Schema({
     comments: {
         type: Array,
         default: [],
+        ref: 'Comment'
     },
     rates: {
         type: Number,
