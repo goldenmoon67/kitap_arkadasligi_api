@@ -33,5 +33,10 @@
     "valid-image-url-message":"ImageUrl should be an Url",
     "valid-nickname-message":"nickName should not be less then 3 character",
     "nickname-already-taken":"This nickname is already taken.",
-    "valid-comment-message":"Comment should not be empty"
+    "valid-comment-message":"Comment should not be empty",
+    "un-expected-value-for-prod-type":"This prodType is not supported.",
+    "advs-book-title-generated-by-name":"friend to read {{bookName}}",
+    "valid-description-message":"description is mandatory field",
+    "valid-prodType-message":"prodType is mandatory field and also prodType should be an enum: {{prodTypesList}}",
+    "valid-prodId-message":"prodId is mandatory field"
 }

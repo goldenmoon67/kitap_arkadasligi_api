@@ -22,7 +22,7 @@ exports.createBook = async (req, res, next) => {
             pageCount: req.body.pageCount,
 
         });
-        const response = await bookHandler.createBook(BookObject, req.body.author, { bookExists: req.t("already-exists"), authorNotFound: "author-is-not-exists" });
+        const response = await bookHandler.createBook(BookObject, req.body.author, { bookExists: req.t("already-exists"), authorNotFound: req.t("author-is-not-exists") });
 
         return res.status(201).json({ createdTime: response.createdAt, bookId: response.id });
 

@@ -10,7 +10,8 @@ const dataSchema = new mongoose.Schema({
         type: String
     },
     userId: {
-        type: String,
+        required: true,
+        type: String
     },
     rates: {
         type: Number,

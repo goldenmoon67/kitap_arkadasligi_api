@@ -82,3 +82,5 @@ exports.DEFAULT_PAGING_ELEMENT_LIMIT=10;
 
 exports.DEFAULT_SENDGRID_EMAIL_ADDRESS= "mirac@z2h.it";
 
+exports.PROD_TYPES=["book","movie","series"];
+

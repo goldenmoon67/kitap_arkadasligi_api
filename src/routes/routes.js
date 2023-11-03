@@ -6,6 +6,7 @@ const authorRoutes=require("./author-routes");
 const bookRoutes=require("./book-routes");
 const directorRoutes=require("./director-routes");
 const userRoutes= require("./user-routes");
+const advsRoutes=require("./advs-routes");
 
 router.use(authRoutes);
 router.use(adminRoutes);
@@ -13,5 +14,6 @@ router.use(authorRoutes);
 router.use(bookRoutes);
 router.use(directorRoutes);
 router.use(userRoutes);
+router.use(advsRoutes);
 
 module.exports = router;
