@@ -3,6 +3,9 @@ const userhandler = require("../../user/handler");
 const authorHandler = require("../author/handler");
 const Consts = require("../../../consts/consts");
 const commentHandler=require("../../social/comment/handler");
+const User=require("../../../models/user")
+const mongoose = require('mongoose');
+
 exports.createBook = async (BookObject, authorId, errorMessagesObject) => {
     const isExisting = await this.findByName(BookObject.name);
 
@@ -51,7 +54,6 @@ exports.readABook = async (bookId, userId, errorMessagesObject) => {
     const book = await this.findById(bookId, errorMessagesObject.forbiddenBook);
 
     const user = await userhandler.findUserByID(userId);
-
     if (!book) {
         const error = new Error(errorMessagesObject.forbiddenBook);
         error.statusCode = 500;
@@ -72,8 +74,9 @@ exports.readABook = async (bookId, userId, errorMessagesObject) => {
     }
     book.readBy.push(userId);
     await book.save();
-    user.books.push(bookId);
-    await user.save();
+    const userNew = await User.findOne({ userId: userId });
+    userNew.books.push(new mongoose.Types.ObjectId(bookId));
+        await userNew.save();
 
 };
 

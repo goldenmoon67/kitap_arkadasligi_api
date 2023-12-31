@@ -8,7 +8,7 @@ const dataSchema = new mongoose.Schema({
         required: true,
         type: String
     },
-    description: {
+    message: {
         required: true,
         type: String
     },
@@ -17,7 +17,7 @@ const dataSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'User' 
     },
-    prodType: {
+    notificationType: {
         required: true,
         type: String
     },
@@ -26,22 +26,10 @@ const dataSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
 
     },
-    comments: {
-        type: Array,
-        default: [],
-        ref: 'Comment'
+    senderUserId: {
+        required: true,
+        type: String,
     },
-    acceptedPrivateConv: {
-        type: Array,
-        default:[],
-        ref: 'User' 
-    },
-    privateComments: {
-        type: Array,
-        default: [],
-        ref: 'Comment'
-    },
-
 }, { timestamps: true });
 dataSchema.plugin(mongoosePaginate);
-module.exports = mongoose.model('Advertisement', dataSchema)
+module.exports = mongoose.model('Notification', dataSchema)

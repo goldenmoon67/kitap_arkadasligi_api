@@ -35,7 +35,7 @@ exports.generateTitleForProd = async (prodType, prodId, messagesObjects) => {
             error.statusCode = 500;
             throw error;
         }
-        return {prodName:isExisting.name, translKey:"advs-book-title-generated-by-name"} ;
+        return isExisting.name;
     } else if (prodType == "movie") {
         //const isExisting = await bookHandler.findById(prodId);
         if (!isExisting) {
@@ -43,7 +43,7 @@ exports.generateTitleForProd = async (prodType, prodId, messagesObjects) => {
             error.statusCode = 500;
             throw error;
         }
-        return  {prodName:isExisting.name, translKey:"advs-book-title-generated-by-name"} ;
+        return   isExisting.name;
     } else if (prodType == "series") {
         //const isExisting = await bookHandler.findById(prodId);
         if (!isExisting) {
@@ -51,7 +51,7 @@ exports.generateTitleForProd = async (prodType, prodId, messagesObjects) => {
             error.statusCode = 500;
             throw error;
         }
-        return  {prodName:isExisting.name, translKey:"advs-book-title-generated-by-name"} ;
+        return   isExisting.name;
     } else {
         const error = new Error(messagesObjects.unExpectedValue);
         error.statusCode = 500;

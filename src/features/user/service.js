@@ -15,12 +15,14 @@ exports.getUser = async (req, res, next) => {
             userId: response.userId,
             nickName: response.nickName,
             email: response.email,
+            imageUrl:response.imageUrl,
             friends: response.friends,
             books: response.books,
             movies: response.movies,
             series: response.series,
             advertisements: response.advertisements,
             rates: response.rates,
+            
         });
 
     } catch (error) {

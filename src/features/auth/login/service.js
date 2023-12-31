@@ -27,6 +27,7 @@ exports.login = async (req, res, next) => {
             userId: data.localId,
 
         }
+        console.log("Logged in");
         return res.status(201).json(standardToken);
 
     } catch (error) {

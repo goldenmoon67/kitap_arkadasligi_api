@@ -13,10 +13,14 @@ const dataSchema = new mongoose.Schema({
     },
     nickName: {
         type: String,
+    },   
+    imageUrl: {
+        type: String,
     },
     books: {
         type: Array,
         default: [],
+        ref: 'Book' 
     },
     movies: {
         type: Array,
