@@ -4,30 +4,51 @@ const Consts = require("../../consts/consts");
 
 exports.findUserByID = async (userId) => {
   const user = await User.aggregate([
-    { $match: { userId:userId } },
+    { $match: { userId: userId } },
     {
       $lookup: {
-          from: 'books', // Kitapların saklandığı koleksiyonun adı
-          localField: 'books', // User modelindeki kitap ID'leri
-          foreignField: '_id', // Book modelindeki eşleşen ID alanı
-          as: 'bookDetails' // Sonuçların ekleneceği alan
+        from: 'books',
+        localField: 'books',
+        foreignField: '_id',
+        as: 'bookDetails'
       }
-  },
-  {
-    $project: {
+    },
+    { $unwind: "$bookDetails" },
+    { $sort: { "bookDetails.someField": 1 } }, // 'someField' kitapları sıralamak için kullanılan alan
+    {
+      $project: {
         userId: 1,
         nickName: 1,
         email: 1,
         imageUrl: 1,
         friends: 1,
-        books: "$bookDetails", // Burada bookDetails alanını books olarak adlandırıyoruz
         movies: 1,
         series: 1,
         advertisements: 1,
-        rates: 1
-    }
-}
-]);
+        rates: 1,
+        bookDetails: {
+          name: "$bookDetails.name", // Kitabın adı
+          imageUrl: "$bookDetails.imageUrl" // Kitabın resmi
+        }
+      }
+    },
+    {
+      $group: {
+        _id: "$_id",
+        userId: { $first: "$userId" },
+        nickName: { $first: "$nickName" },
+        email: { $first: "$email" },
+        imageUrl: { $first: "$imageUrl" },
+        friends: { $first: "$friends" },
+        books: { $push: "$bookDetails" },
+        movies: { $first: "$movies" },
+        series: { $first: "$series" },
+        advertisements: { $first: "$advertisements" },
+        rates: { $first: "$rates" }
+      }
+    },
+    { $addFields: { books: { $slice: ["$books", 3] } } } // İlk 3 kitabı almak için $slice kullanılır
+  ]);
 
 console.log(user);
   if (!user) {
