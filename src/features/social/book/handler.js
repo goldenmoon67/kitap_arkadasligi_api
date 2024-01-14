@@ -159,7 +159,7 @@ exports.commentToBook = async (bookId, userId, comment, errorMessagesObject) => 
         throw error;
     }
 
-    const createdComment = await commentHandler.createComment(comment, userId, errorMessagesObject.forbiddenUser);
+    const createdComment = await commentHandler.createComment(comment, userId,bookId,"book", errorMessagesObject.forbiddenUser);
     book.comments.push(createdComment._id);
     await book.save();
 

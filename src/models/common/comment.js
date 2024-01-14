@@ -9,7 +9,15 @@ const dataSchema = new mongoose.Schema({
         required: true,
         type: String
     },
-    userId: {
+    ownerId: {
+        required: true,
+        type: String
+    },
+    prodId: {
+        required: true,
+        type: String
+    },
+    prodType: {
         required: true,
         type: String
     },
@@ -18,6 +26,6 @@ const dataSchema = new mongoose.Schema({
         default: 0,
     },
 
-},{ timestamps: true });
+}, { timestamps: true });
 dataSchema.plugin(mongoosePaginate);
 module.exports = mongoose.model('Comment', dataSchema)
