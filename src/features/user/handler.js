@@ -27,6 +27,7 @@ exports.findUserByID = async (userId) => {
         advertisements: 1,
         rates: 1,
         bookDetails: {
+          id:"$bookDetails._id",//id
           name: "$bookDetails.name", // Kitabın adı
           imageUrl: "$bookDetails.imageUrl" // Kitabın resmi
         }
