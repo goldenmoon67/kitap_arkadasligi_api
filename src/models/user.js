@@ -13,19 +13,19 @@ const dataSchema = new mongoose.Schema({
     },
     nickName: {
         type: String,
-    },   
+    },
     imageUrl: {
         type: String,
     },
     books: {
         type: Array,
         default: [],
-        ref: 'Book' 
-    }, 
+        ref: 'Book'
+    },
     comments: {
         type: Array,
         default: [],
-        ref: 'Comment' 
+        ref: 'Comment'
     },
     movies: {
         type: Array,
@@ -39,7 +39,7 @@ const dataSchema = new mongoose.Schema({
         type: Array,
         default: [],
     },
-   
+
     advertisements: {
         type: Array,
         default: [],
@@ -48,6 +48,6 @@ const dataSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-},{ timestamps: true });
+}, { timestamps: true });
 dataSchema.plugin(mongoosePaginate);
 module.exports = mongoose.model('User', dataSchema)

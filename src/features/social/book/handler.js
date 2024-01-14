@@ -2,8 +2,8 @@ const Book = require("../../../models/social/book");
 const userhandler = require("../../user/handler");
 const authorHandler = require("../author/handler");
 const Consts = require("../../../consts/consts");
-const commentHandler=require("../../social/comment/handler");
-const User=require("../../../models/user")
+const commentHandler = require("../../social/comment/handler");
+const User = require("../../../models/user")
 const mongoose = require('mongoose');
 
 exports.createBook = async (BookObject, authorId, errorMessagesObject) => {
@@ -41,7 +41,7 @@ exports.findById = async (_id, errorMessage) => {
         path: "author",
         select: "fullName imageUrl"
     })
-        
+
     if (!book) {
         const error = new Error(errorMessage);
         error.statusCode = 500;
@@ -76,7 +76,7 @@ exports.readABook = async (bookId, userId, errorMessagesObject) => {
     await book.save();
     const userNew = await User.findOne({ userId: userId });
     userNew.books.push(new mongoose.Types.ObjectId(bookId));
-        await userNew.save();
+    await userNew.save();
 
 };
 
@@ -142,7 +142,7 @@ exports.getUserBooks = async (limit, page, userId) => {
     return response;
 };
 
-exports.commentToBook = async (bookId, userId,comment, errorMessagesObject) => {
+exports.commentToBook = async (bookId, userId, comment, errorMessagesObject) => {
     const book = await this.findById(bookId, errorMessagesObject.forbiddenBook);
 
     const user = await userhandler.findUserByID(userId);
@@ -159,15 +159,15 @@ exports.commentToBook = async (bookId, userId,comment, errorMessagesObject) => {
         throw error;
     }
 
-    const createdComment=await commentHandler.createComment(comment,userId,errorMessagesObject.forbiddenUser);
-    book.comments.push(createdComment._id);  
-      await book.save();
+    const createdComment = await commentHandler.createComment(comment, userId, errorMessagesObject.forbiddenUser);
+    book.comments.push(createdComment._id);
+    await book.save();
 
-    const userNew = await User.findOne({ userId: userId });   
-     userNew.comments.push(new mongoose.Types.ObjectId(createdComment._id));
-     await userNew.save();
+    const userNew = await User.findOne({ userId: userId });
+    userNew.comments.push(new mongoose.Types.ObjectId(createdComment._id));
+    await userNew.save();
 
-    
+
 };
 
 exports.createBookForDBConvert = async (BookObject, authorName) => {

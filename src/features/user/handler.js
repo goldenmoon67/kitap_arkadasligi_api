@@ -37,7 +37,7 @@ exports.findUserByID = async (userId) => {
         advertisements: 1,
         rates: 1,
         bookDetails: {
-          id:"$bookDetails._id",//id
+          id: "$bookDetails._id",//id
           name: "$bookDetails.name", // Kitabın adı
           imageUrl: "$bookDetails.imageUrl" // Kitabın resmi
         },
@@ -63,17 +63,17 @@ exports.findUserByID = async (userId) => {
         rates: { $first: "$rates" }
       }
     },
-    { $addFields: { books: { $slice: ["$books", 3] },comments: { $slice: ["$comments", 3] }  }, } // İlk 3 kitabı almak için $slice kullanılır
+    { $addFields: { books: { $slice: ["$books", 3] }, comments: { $slice: ["$comments", 3] } }, } // İlk 3 kitabı almak için $slice kullanılır
   ]);
 
-console.log(user);
+  console.log(user);
   if (!user) {
     return false;
   }
   return user[0];
 };
 
-exports.updateUser = async (updatedData,errorMessage) => {
+exports.updateUser = async (updatedData, errorMessage) => {
   const userId = updatedData.userId;
   const updatedUser = await User.findOneAndUpdate({
     userId
@@ -87,7 +87,7 @@ exports.updateUser = async (updatedData,errorMessage) => {
 }
 exports.findByNickName = async (nickName) => {
   const user = await User.findOne({
-    nickName:{$regex : nickName.toString(), "$options": "i" }
+    nickName: { $regex: nickName.toString(), "$options": "i" }
   });
   if (!user) {
     return false;
@@ -97,8 +97,8 @@ exports.findByNickName = async (nickName) => {
 
 exports.getUsers = async (limit, page) => {
   const options = {
-      page: page || 1,
-      limit: limit || Consts.DEFAULT_PAGING_ELEMENT_LIMIT,
+    page: page || 1,
+    limit: limit || Consts.DEFAULT_PAGING_ELEMENT_LIMIT,
   };
 
   const response = await User.paginate({}, options);

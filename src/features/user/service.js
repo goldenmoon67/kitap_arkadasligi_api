@@ -1,5 +1,5 @@
 const userHandler = require('./handler');
-const User=require("../../models/user");
+const User = require("../../models/user");
 const { validationResult } = require("express-validator");
 
 
@@ -15,15 +15,15 @@ exports.getUser = async (req, res, next) => {
             userId: response.userId,
             nickName: response.nickName,
             email: response.email,
-            imageUrl:response.imageUrl,
+            imageUrl: response.imageUrl,
             friends: response.friends,
             books: response.books,
             movies: response.movies,
             series: response.series,
             advertisements: response.advertisements,
             rates: response.rates,
-            comments:response.comments,
-            
+            comments: response.comments,
+
         });
 
     } catch (error) {
@@ -45,10 +45,10 @@ exports.updateProfile = async (req, res, next) => {
             error.data = errors.array();
             throw error;
         }
-        const updatedData=req.body;
-        const  userId = req.user.user_id;       
-        updatedData.userId=userId;
-        const response = await userHandler.updateUser(updatedData,req.t("user-does-not-found"));
+        const updatedData = req.body;
+        const userId = req.user.user_id;
+        updatedData.userId = userId;
+        const response = await userHandler.updateUser(updatedData, req.t("user-does-not-found"));
         return res.status(201).json({ createdTime: response.createdAt, userId: response.userId });
     } catch (error) {
         if (!error.statusCode) {
