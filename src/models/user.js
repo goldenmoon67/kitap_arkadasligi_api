@@ -21,6 +21,11 @@ const dataSchema = new mongoose.Schema({
         type: Array,
         default: [],
         ref: 'Book' 
+    }, 
+    comments: {
+        type: Array,
+        default: [],
+        ref: 'Comment' 
     },
     movies: {
         type: Array,

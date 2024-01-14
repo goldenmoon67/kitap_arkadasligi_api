@@ -22,6 +22,7 @@ exports.getUser = async (req, res, next) => {
             series: response.series,
             advertisements: response.advertisements,
             rates: response.rates,
+            comments:response.comments,
             
         });
 

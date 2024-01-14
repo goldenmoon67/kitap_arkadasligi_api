@@ -160,8 +160,13 @@ exports.commentToBook = async (bookId, userId,comment, errorMessagesObject) => {
     }
 
     const createdComment=await commentHandler.createComment(comment,userId,errorMessagesObject.forbiddenUser);
-    book.comments.push(createdComment._id);
-    await book.save();
+    book.comments.push(createdComment._id);  
+      await book.save();
+
+    const userNew = await User.findOne({ userId: userId });   
+     userNew.comments.push(new mongoose.Types.ObjectId(createdComment._id));
+     await userNew.save();
+
     
 };
 

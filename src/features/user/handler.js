@@ -15,6 +15,16 @@ exports.findUserByID = async (userId) => {
     },
     { $unwind: "$bookDetails" },
     { $sort: { "bookDetails.someField": 1 } }, // 'someField' kitapları sıralamak için kullanılan alan
+
+    {
+      $lookup: {
+        from: 'comments',
+        localField: 'comments',
+        foreignField: '_id',
+        as: 'commentDetails'
+      }
+    },
+    { $unwind: "$commentDetails" },
     {
       $project: {
         userId: 1,
@@ -30,6 +40,10 @@ exports.findUserByID = async (userId) => {
           id:"$bookDetails._id",//id
           name: "$bookDetails.name", // Kitabın adı
           imageUrl: "$bookDetails.imageUrl" // Kitabın resmi
+        },
+        commentDetails: {
+          id: "$commentDetails._id",
+          text: "$commentDetails.text",
         }
       }
     },
@@ -42,13 +56,14 @@ exports.findUserByID = async (userId) => {
         imageUrl: { $first: "$imageUrl" },
         friends: { $first: "$friends" },
         books: { $push: "$bookDetails" },
+        comments: { $push: "$commentDetails" },
         movies: { $first: "$movies" },
         series: { $first: "$series" },
         advertisements: { $first: "$advertisements" },
         rates: { $first: "$rates" }
       }
     },
-    { $addFields: { books: { $slice: ["$books", 3] } } } // İlk 3 kitabı almak için $slice kullanılır
+    { $addFields: { books: { $slice: ["$books", 3] },comments: { $slice: ["$comments", 3] }  }, } // İlk 3 kitabı almak için $slice kullanılır
   ]);
 
 console.log(user);
