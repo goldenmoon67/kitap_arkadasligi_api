@@ -37,13 +37,16 @@ exports.findUserByID = async (userId) => {
         advertisements: 1,
         rates: 1,
         bookDetails: {
-          id: "$bookDetails._id",//id
-          name: "$bookDetails.name", // Kitabın adı
-          imageUrl: "$bookDetails.imageUrl" // Kitabın resmi
+          id: "$bookDetails._id",
+          name: "$bookDetails.name", 
+          imageUrl: "$bookDetails.imageUrl" 
         },
         commentDetails: {
           id: "$commentDetails._id",
           text: "$commentDetails.text",
+          prodType: "$commentDetails.prodType",
+          prodId: "$commentDetails.prodId",
+          ownerId: "$commentDetails.ownerId",
         }
       }
     },
@@ -72,7 +75,15 @@ exports.findUserByID = async (userId) => {
   }
   return user[0];
 };
+exports.findUserByIDBasic = async (userId) => {
+  const user = await User.findOne({userId});
 
+  console.log(user);
+  if (!user) {
+    return false;
+  }
+  return user;
+};
 exports.updateUser = async (updatedData, errorMessage) => {
   const userId = updatedData.userId;
   const updatedUser = await User.findOneAndUpdate({

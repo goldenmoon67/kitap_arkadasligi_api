@@ -145,7 +145,7 @@ exports.getUserBooks = async (limit, page, userId) => {
 exports.commentToBook = async (bookId, userId, comment, errorMessagesObject) => {
     const book = await this.findById(bookId, errorMessagesObject.forbiddenBook);
 
-    const user = await userhandler.findUserByID(userId);
+    const user = await userhandler.findUserByIDBasic(userId);
 
     if (!book) {
         const error = new Error(errorMessagesObject.forbiddenBook);
@@ -159,7 +159,7 @@ exports.commentToBook = async (bookId, userId, comment, errorMessagesObject) => 
         throw error;
     }
 
-    const createdComment = await commentHandler.createComment(comment, userId,bookId,"book", errorMessagesObject.forbiddenUser);
+    const createdComment = await commentHandler.createComment(comment, userId, bookId, "book", errorMessagesObject.forbiddenUser);
     book.comments.push(createdComment._id);
     await book.save();
 
