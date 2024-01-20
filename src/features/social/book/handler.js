@@ -35,19 +35,87 @@ exports.findByName = async (name) => {
 
 exports.findById = async (_id, errorMessage) => {
 
-    const book = await Book.findById({
-        _id,
-    }).populate({
-        path: "author",
-        select: "fullName imageUrl"
-    })
-
+    const book = await Book.aggregate([
+        { $match: { _id:new mongoose.Types.ObjectId(_id) } },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'readBy',
+                foreignField: 'userId',
+                as: 'readByUsers'
+            }
+        },
+        {
+            $lookup: {
+                from: 'authors',
+                localField: 'author',
+                foreignField: '_id',
+                as: 'authorDetails'
+            }
+        },
+        {
+            $lookup: {
+                from: 'comments',
+                localField: 'comments',
+                foreignField: 'prodId',
+                as: 'commentDetails'
+            }
+        },
+        {
+            $unwind: "$authorDetails"
+        },
+        {
+            $project: {
+                // Kitap detayları
+                name: 1,
+                description: 1,
+                pageCount: 1,
+                categories: 1,
+                orginalName: 1,
+                rates: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                __v: 1,
+                // Kullanıcı detayları
+                readByUsers: {
+                    $map: {
+                        input: "$readByUsers",
+                        as: "user",
+                        in: { userId: "$$user.userId", name: "$$user.nickName", imageUrl: "$$user.imageUrl" }
+                    }
+                },
+                // Yazar detayları
+                author: {
+                    _id: "$authorDetails._id",
+                    name: "$authorDetails.fullName",
+                    imageUrl: "$authorDetails.imageUrl"
+                },
+                // Yorum detayları
+                commentDetails: {
+                    $map: {
+                        input: "$commentDetails",
+                        as: "comment",
+                        in: {
+                            _id: "$$comment._id",
+                            text: "$$comment.text",
+                            userId: "$$comment.userId",
+                            prodId: "$$comment.prodId",
+                            prodType: "$$comment.prodType",
+                            rates: "$$comment.rates",
+                     
+                            __v: "$$comment.__v"
+                        }
+                    }
+                }
+            }
+        }
+    ]);
     if (!book) {
         const error = new Error(errorMessage);
         error.statusCode = 500;
         throw error;
     }
-    return book;
+    return book[0];
 };
 
 exports.readABook = async (bookId, userId, errorMessagesObject) => {

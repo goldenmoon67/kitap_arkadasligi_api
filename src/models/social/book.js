@@ -30,6 +30,7 @@ const dataSchema = new mongoose.Schema({
     readBy: {
         type: Array,
         default: [],
+        ref:"User"
     },
    
     comments: {
