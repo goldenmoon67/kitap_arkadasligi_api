@@ -15,7 +15,7 @@ const dataSchema = new mongoose.Schema({
     },
     prodId: {
         required: true,
-        type: String
+        type:  mongoose.Types.ObjectId,
     },
     prodType: {
         required: true,

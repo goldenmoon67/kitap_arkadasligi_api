@@ -4,7 +4,7 @@ const handler = require("./handler");
 const { validationResult } = require("express-validator");
 const prodHelper = require("../../../utils/prod-helper");
 
-exports.createAuthor = async (req, res, next) => {
+exports.createAdvs = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

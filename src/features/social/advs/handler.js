@@ -2,9 +2,10 @@ const Advs = require("../../../models/social/advertisement");
 const userHandler = require("../../user/handler");
 const Consts = require("../../../consts/consts");
 const prodHelper = require("../../../utils/prod-helper");
+const mongoose = require('mongoose');
 
 exports.createAdvs = async (title, description, userId, prodType, prodId, errorMessages) => {
-    const user = await userHandler.findUserByID(userId);
+    const user = await userHandler.findUserByIDBasic(userId);
     if (!user) {
         const error = new Error(errorMessages.forbiddenUser);
         error.statusCode = 500;
@@ -15,6 +16,8 @@ exports.createAdvs = async (title, description, userId, prodType, prodId, errorM
         bookNotExistsMessage: errorMessages.bookNotExistsMessage
     });
     const response = await Advs.create({ title: title, description: description, userId: user._id, prodId: prodId, prodType: prodType });
+    user.advertisements.push(new mongoose.Types.ObjectId(response._id));
+    await user.save();
     return response;
 };
 

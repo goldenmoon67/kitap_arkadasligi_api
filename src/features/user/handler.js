@@ -1,5 +1,6 @@
 const User = require('../../models/user');
 const Consts = require("../../consts/consts");
+const { default: mongoose } = require('mongoose');
 
 
 exports.findUserByID = async (userId) => {
@@ -14,7 +15,7 @@ exports.findUserByID = async (userId) => {
       }
     },
     { $unwind: "$bookDetails" },
-    { $sort: { "bookDetails.someField": 1 } }, // 'someField' kitapları sıralamak için kullanılan alan
+    { $sort: { "bookDetails.someField": 1 } },
 
     {
       $lookup: {
@@ -26,6 +27,37 @@ exports.findUserByID = async (userId) => {
     },
     { $unwind: "$commentDetails" },
     {
+      $lookup: {
+        from: 'books',
+        localField: 'commentDetails.prodId',
+        foreignField: '_id',
+        as: 'relatedBookDetails'
+      }
+    },
+    { $unwind: { path: "$relatedBookDetails", preserveNullAndEmptyArrays: true } },
+    // Yeni eklenen kısım: advertisements için lookup
+    {
+      $lookup: {
+        from: 'advertisements',
+        localField: 'advertisements',
+        foreignField: '_id',
+        as: 'advertisementDetails'
+      }
+    },
+    { $unwind: "$advertisementDetails" },
+
+    // Reklamlardaki her ürün için kitap detayları çekme
+    {
+      $lookup: {
+        from: 'books',
+        localField: 'advertisementDetails.prodId',
+        foreignField: '_id',
+        as: 'advertisementBookDetails'
+      }
+    },
+    { $unwind: { path: "$advertisementBookDetails", preserveNullAndEmptyArrays: true } },
+
+    {
       $project: {
         userId: 1,
         nickName: 1,
@@ -34,7 +66,6 @@ exports.findUserByID = async (userId) => {
         friends: 1,
         movies: 1,
         series: 1,
-        advertisements: 1,
         rates: 1,
         bookDetails: {
           id: "$bookDetails._id",
@@ -47,6 +78,20 @@ exports.findUserByID = async (userId) => {
           prodType: "$commentDetails.prodType",
           prodId: "$commentDetails.prodId",
           ownerId: "$commentDetails.ownerId",
+          relatedBook: {
+            id: "$relatedBookDetails._id",
+            name: "$relatedBookDetails.name",
+            imageUrl: "$relatedBookDetails.imageUrl"
+          }
+        },
+        // Reklamların detayları
+        advertisementDetails: {
+          id: "$advertisementDetails._id",
+          title: "$advertisementDetails.title",
+          description: "$advertisementDetails.description",
+          prodId: "$advertisementDetails.prodId",
+          prodType: "$advertisementDetails.prodType",
+          bookImageUrl: "$advertisementBookDetails.imageUrl" // Kitabın imageUrl'ini ekleme
         }
       }
     },
@@ -62,11 +107,11 @@ exports.findUserByID = async (userId) => {
         comments: { $push: "$commentDetails" },
         movies: { $first: "$movies" },
         series: { $first: "$series" },
-        advertisements: { $first: "$advertisements" },
+        advertisements: { $push: "$advertisementDetails" },
         rates: { $first: "$rates" }
       }
     },
-    { $addFields: { books: { $slice: ["$books", 3] }, comments: { $slice: ["$comments", 3] } }, } // İlk 3 kitabı almak için $slice kullanılır
+    { $addFields: { books: { $slice: ["$books", 3] }, comments: { $slice: ["$comments", 3] }, advertisements: { $slice: ["$advertisements", 3] } } }
   ]);
 
   console.log(user);
@@ -75,6 +120,7 @@ exports.findUserByID = async (userId) => {
   }
   return user[0];
 };
+
 exports.findUserByIDBasic = async (userId) => {
   const user = await User.findOne({userId});
 

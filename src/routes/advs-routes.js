@@ -10,7 +10,7 @@ router.post('/advs', [
     advsValidator.prodIdValidator
 ],
 authService.authenticate,
-  advsService.createAuthor
+  advsService.createAdvs
 );
 
 router.get('/advs',

@@ -32,7 +32,12 @@ exports.findByName = async (name) => {
     });
     return book;
 };
-
+exports.findByIdBasic = async (_id) => {
+    const book = await Book.findOne({
+        _id,
+    });
+    return book;
+};
 exports.findById = async (_id, errorMessage) => {
 
     const book = await Book.aggregate([
@@ -211,7 +216,7 @@ exports.getUserBooks = async (limit, page, userId) => {
 };
 
 exports.commentToBook = async (bookId, userId, comment, errorMessagesObject) => {
-    const book = await this.findById(bookId, errorMessagesObject.forbiddenBook);
+    const book = await this.findByIdBasic(bookId);
 
     const user = await userhandler.findUserByIDBasic(userId);
 
@@ -228,6 +233,7 @@ exports.commentToBook = async (bookId, userId, comment, errorMessagesObject) => 
     }
 
     const createdComment = await commentHandler.createComment(comment, userId, bookId, "book", errorMessagesObject.forbiddenUser);
+
     book.comments.push(createdComment._id);
     await book.save();
 
