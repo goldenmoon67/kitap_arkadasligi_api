@@ -21,18 +21,60 @@ exports.createAdvs = async (title, description, userId, prodType, prodId, errorM
     return response;
 };
 
-exports.findById = async (_id, errorMessage) => {
+exports.findById = async (id, errorMessage) => {
+    const _id=new mongoose.Types.ObjectId(id );
+    const advs = await Advs.aggregate([
+        { $match: {_id } },
+        {
+            $lookup: {
+                from: 'books', // İlişkilendirilecek koleksiyon
+                localField: 'prodId', // Mevcut koleksiyondaki alan
+                foreignField: '_id', // İlişkilendirilecek koleksiyondaki alan
+                as: 'bookDetails' // Sonuçların ekleneceği alan
+            }
+        },
+        { $unwind: { path: "$bookDetails", preserveNullAndEmptyArrays: true } },
 
-    const advs = await Advs.findOne({
-        _id,
-    });
+        {
+            $lookup: {
+                from: 'users', // İlişkilendirilecek ikinci koleksiyon (kullanıcılar)
+                localField: 'userId', // Mevcut koleksiyondaki alan
+                foreignField: '_id', // İlişkilendirilecek koleksiyondaki alan
+                as: 'userDetails' // Sonuçların ekleneceği alan
+            }
+        },
+        { $unwind: { path: "$userDetails", preserveNullAndEmptyArrays: true } },
+        
+        {
+            $project: {
+                title: 1,
+                description: 1,
+                userId: 1,
+                prodType: 1,
+                prodId: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                __v: 1,
+                bookDetails: {
+                    id:"$bookDetails._id",
+                    name: "$bookDetails.name",
+                    imageUrl: "$bookDetails.imageUrl"
+                },
+                ownerDetail: {
+                    userId: "$userDetails.userId",
+                    name: "$userDetails.nickName",
+                    imageUrl: "$userDetails.imageUrl"
+                },
+            }
+        }
+    ]).exec();
 
-    if (!advs) {
+    if (!advs || advs.length === 0) {
         const error = new Error(errorMessage);
         error.statusCode = 500;
         throw error;
     }
-    return advs;
+    return advs[0];
 };
 
 exports.getAdvses = async (limit, page) => {

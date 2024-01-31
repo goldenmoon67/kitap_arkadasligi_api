@@ -53,7 +53,7 @@ exports.bookDetail = async (req, res, next) => {
     try {
         const bookId = req.params.id;
 
-        const response = await bookHandler.findById(bookId, req.t("forbidden-book"));
+        const response = await bookHandler.findById(req.user.user_id,bookId, req.t("forbidden-book"));
 
         return res.status(200).json(response);
 

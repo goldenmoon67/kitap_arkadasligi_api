@@ -12,7 +12,7 @@ exports.getUser = async (req, res, next) => {
         }
         const response = await userHandler.findUserByID(userId);
         return res.status(201).json({
-            userId: response.userId,
+            userId: userId,
             nickName: response.nickName,
             email: response.email,
             imageUrl: response.imageUrl,

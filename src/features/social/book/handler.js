@@ -38,10 +38,17 @@ exports.findByIdBasic = async (_id) => {
     });
     return book;
 };
-exports.findById = async (_id, errorMessage) => {
-
+exports.findById = async (userId,_id, errorMessage) => {
+        
     const book = await Book.aggregate([
         { $match: { _id:new mongoose.Types.ObjectId(_id) } },
+        {
+            $addFields: {
+                isReadByUser: {
+                    $in: [userId, "$readBy"]
+                }
+            }
+        },
         {
             $lookup: {
                 from: 'users',
@@ -80,6 +87,8 @@ exports.findById = async (_id, errorMessage) => {
                 rates: 1,
                 createdAt: 1,
                 updatedAt: 1,
+                isReadByUser:1,
+                imageUrl:1,
                 __v: 1,
                 // Kullanıcı detayları
                 readByUsers: {
@@ -124,9 +133,9 @@ exports.findById = async (_id, errorMessage) => {
 };
 
 exports.readABook = async (bookId, userId, errorMessagesObject) => {
-    const book = await this.findById(bookId, errorMessagesObject.forbiddenBook);
+    const book = await this.findByIdBasic(bookId);
 
-    const user = await userhandler.findUserByID(userId);
+    const user = await userhandler.findUserByIDBasic(userId);
     if (!book) {
         const error = new Error(errorMessagesObject.forbiddenBook);
         error.statusCode = 500;
@@ -147,16 +156,15 @@ exports.readABook = async (bookId, userId, errorMessagesObject) => {
     }
     book.readBy.push(userId);
     await book.save();
-    const userNew = await User.findOne({ userId: userId });
-    userNew.books.push(new mongoose.Types.ObjectId(bookId));
-    await userNew.save();
+    user.books.push(new mongoose.Types.ObjectId(bookId));
+    await user.save();
 
 };
 
 exports.removeReadBook = async (bookId, userId, errorMessagesObject) => {
-    const book = await this.findById(bookId, errorMessagesObject.forbiddenBook);
+    const book = await this.findByIdBasic(bookId);
 
-    const user = await userhandler.findUserByID(userId);
+    const user = await userhandler.findUserByIDBasic(userId);
 
     if (!book) {
         const error = new Error(errorMessagesObject.forbiddenBook);
@@ -178,7 +186,7 @@ exports.removeReadBook = async (bookId, userId, errorMessagesObject) => {
     }
     book.readBy.pull(userId)
     await book.save();
-    user.books.pull(bookId);
+    user.books.pull(new mongoose.Types.ObjectId(bookId));
     await user.save();
 
 };

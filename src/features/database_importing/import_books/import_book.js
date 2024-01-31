@@ -9,7 +9,7 @@ exports.importCSV2MongoDB = (req, res,next) => {
         //  Read Excel File to Json Data
         csvtojson().fromFile(filePath).then(async source => {
             // Fetching the all data from each row
-            for (var i = 0; i < source.length; i++) {
+            for (var i = 0; i <source.length; i++) {
                 var categories = [];
                 if (source[i]["categories"] != null) {
 

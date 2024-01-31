@@ -4,6 +4,8 @@ const { default: mongoose } = require('mongoose');
 
 
 exports.findUserByID = async (userId) => {
+  console.log("-------------");
+  console.log(userId);
   const user = await User.aggregate([
     { $match: { userId: userId } },
     {
@@ -14,8 +16,7 @@ exports.findUserByID = async (userId) => {
         as: 'bookDetails'
       }
     },
-    { $unwind: "$bookDetails" },
-    { $sort: { "bookDetails.someField": 1 } },
+    { $unwind: {path:"$bookDetails" , preserveNullAndEmptyArrays: true} },
 
     {
       $lookup: {
@@ -25,7 +26,7 @@ exports.findUserByID = async (userId) => {
         as: 'commentDetails'
       }
     },
-    { $unwind: "$commentDetails" },
+    { $unwind: {path:"$commentDetails", preserveNullAndEmptyArrays: true}  },
     {
       $lookup: {
         from: 'books',
@@ -103,7 +104,11 @@ exports.findUserByID = async (userId) => {
         email: { $first: "$email" },
         imageUrl: { $first: "$imageUrl" },
         friends: { $first: "$friends" },
-        books: { $push: "$bookDetails" },
+        books: {
+          $push: {
+            $cond: { if: { $ne: ["$bookDetails", {}] }, then: "$bookDetails", else: "$$REMOVE" }
+          }
+        },
         comments: { $push: "$commentDetails" },
         movies: { $first: "$movies" },
         series: { $first: "$series" },
