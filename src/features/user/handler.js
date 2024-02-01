@@ -4,8 +4,6 @@ const { default: mongoose } = require('mongoose');
 
 
 exports.findUserByID = async (userId) => {
-  console.log("-------------");
-  console.log(userId);
   const user = await User.aggregate([
     { $match: { userId: userId } },
     {

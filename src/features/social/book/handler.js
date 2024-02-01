@@ -196,18 +196,40 @@ exports.getBooks = async (limit, page) => {
     const options = {
         page: page || 1,
         limit: limit || Consts.DEFAULT_PAGING_ELEMENT_LIMIT,
-        populate: [{
-            path: "author",
-            select: "fullName imageUrl"
-        }],
-        select: '_id name pageCount categories readBy comments rates orginalName',
-
+       
+        // Yeni eklenen projection
+        select: '_id name imageUrl', // Buraya kitabın kendi imageUrl'ini eklemeniz gerekiyor.
+        projection: { // Kitap ve yazar detaylarını projekte etme
+            _id: 1,
+            name: 1,
+            imageUrl: 1, // Kitabın kendi resmi
+           
+        },
+        $group: {
+            id: "$_id",
+            name: "$name",
+            imageUrl: "$imageUrl"
+        }
 
     };
 
     const response = await Book.paginate({}, options);
-    return response;
+    const books = response.docs.map(book => {
+        return {
+            id: book._id, // _id'yi id olarak değiştir
+            name: book.name,
+            imageUrl: book.imageUrl,
+            // Buraya diğer istediğiniz alanları ekleyebilirsiniz.
+        };
+    });
+
+    // Yapıyı orijinal paginate cevabına benzetecek şekilde ayarla
+    return {
+        ...response,
+        docs: books
+    };
 };
+
 
 exports.getUserBooks = async (limit, page, userId) => {
     const options = {
