@@ -102,11 +102,7 @@ exports.findUserByID = async (userId) => {
         email: { $first: "$email" },
         imageUrl: { $first: "$imageUrl" },
         friends: { $first: "$friends" },
-        books: {
-          $push: {
-            $cond: { if: { $ne: ["$bookDetails", {}] }, then: "$bookDetails", else: "$$REMOVE" }
-          }
-        },
+        books: { $addToSet: "$bookDetails" },
         comments: { $push: "$commentDetails" },
         movies: { $first: "$movies" },
         series: { $first: "$series" },

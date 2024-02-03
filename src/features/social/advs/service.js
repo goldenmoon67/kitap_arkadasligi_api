@@ -13,6 +13,7 @@ exports.createAdvs = async (req, res, next) => {
             error.data = errors.array();
             throw error;
         }
+
         const prodTitle =await prodHelper.generateTitleForProd(req.body.prodType, req.body.prodId, {
             unExpectedValue: req.t("un-expected-value-for-prod-type"),
             bookNotExistsMessage: req.t("forbidden-book"),
@@ -28,7 +29,7 @@ exports.createAdvs = async (req, res, next) => {
             unExpectedValue: req.t("un-expected-value-for-prod-type"),
             bookNotExistsMessage: req.t("forbidden-book"),
         });
-        return res.status(201).json({ createdTime: response.createdAt, authorId: response.id });
+        return res.status(201).json({ createdTime: response.createdAt, advsId: response.id });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
