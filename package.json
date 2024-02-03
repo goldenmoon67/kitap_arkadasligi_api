@@ -21,6 +21,7 @@
     "i18next-http-middleware": "^3.4.1",
     "install": "^0.13.0",
     "mongoose": "^7.1.0",
+    "mongoose-aggregate-paginate-v2": "^1.0.7",
     "mongoose-paginate-v2": "^1.7.31",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.2",

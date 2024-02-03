@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const mongoosePaginate = require('mongoose-paginate-v2');
+var aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 const dataSchema = new mongoose.Schema({
 
@@ -43,5 +43,5 @@ const dataSchema = new mongoose.Schema({
     },
 
 }, { timestamps: true });
-dataSchema.plugin(mongoosePaginate);
+dataSchema.plugin(aggregatePaginate);
 module.exports = mongoose.model('Advertisement', dataSchema)

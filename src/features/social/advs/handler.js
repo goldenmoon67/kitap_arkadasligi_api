@@ -81,11 +81,49 @@ exports.getAdvses = async (limit, page) => {
     const options = {
         page: page || 1,
         limit: limit || Consts.DEFAULT_PAGING_ELEMENT_LIMIT,
+        // Pipeline for aggregation
+        pipeline: [
+            {
+                // İlk adım olarak 'advertisements' koleksiyonundaki dokümanlarla başla
+                $lookup: {
+                    from: "books", // 'books' koleksiyonu ile eşleştir
+                    localField: "prodId", // 'advertisements' koleksiyonundaki 'prodId'
+                    foreignField: "_id", // 'books' koleksiyonundaki '_id'
+                    as: "bookInfo" // Eşleşen dokümanları 'bookInfo' alanında sakla
+                }
+            },
+            {
+                $unwind: "$bookInfo" // 'bookInfo' dizisini tek bir doküman olarak düzleştir
+            },
+            {
+                // Seçmek istediğiniz alanları belirtin
+                $project: {
+                    _id:0,
+                    id: "$_id", 
+                    title: 1,
+                    description: 1,
+                    prodId:1,
+                    prodType:1,
+                    bookImageUrl: "$bookInfo.imageUrl", // 'bookInfo' içinden 'imageUrl' alanını direkt üst seviye olarak atayın
+                }
+            }
+        ],
     };
 
-    const response = await Advs.paginate({}, options);
+
+    // 'aggregatePaginate' kullanarak sayfalanmış sonuçları elde et
+    // Not: Bu, kullandığınız kütüphaneye bağlı olarak değişiklik gösterebilir.
+    // 'mongoose-aggregate-paginate-v2' gibi bir plugin kullanıyorsanız bu şekilde olabilir.
+    // Eğer doğrudan 'aggregate' kullanıyorsanız, kendi sayfalama mekanizmanızı uygulamanız gerekebilir.
+    const response = await Advs.aggregatePaginate(Advs.aggregate(options.pipeline), {
+        page: options.page,
+        limit: options.limit,
+    });
+
     return response;
 };
+
+
 exports.requestPrivateConv = async (userId, advsId) => {
     const options = {
         page: page || 1,
