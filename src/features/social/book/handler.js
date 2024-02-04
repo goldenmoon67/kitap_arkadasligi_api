@@ -66,16 +66,25 @@ exports.findById = async (userId,_id, errorMessage) => {
             }
         },
         {
+            $unwind: "$authorDetails"
+        },
+        {
             $lookup: {
                 from: 'comments',
                 localField: 'comments',
-                foreignField: 'prodId',
+                foreignField: '_id',
                 as: 'commentDetails'
             }
         },
         {
-            $unwind: "$authorDetails"
+            $lookup: {
+                from: 'users',
+                localField: 'commentDetails.ownerId',
+                foreignField: 'userId',
+                as: 'commentOwnerDetails'
+            }
         },
+      
         {
             $project: {
                 // Kitap detayları
@@ -110,14 +119,34 @@ exports.findById = async (userId,_id, errorMessage) => {
                         input: "$commentDetails",
                         as: "comment",
                         in: {
-                            _id: "$$comment._id",
+                            id: "$$comment._id",
                             text: "$$comment.text",
-                            userId: "$$comment.userId",
-                            prodId: "$$comment.prodId",
-                            prodType: "$$comment.prodType",
-                            rates: "$$comment.rates",
-                     
-                            __v: "$$comment.__v"
+                            prodType:"$$comment.prodType",
+                            prodId:"$$comment.prodId",
+                            // other fields...
+                            ownerDetails: {
+                                $let: {
+                                    vars: {
+                                        ownerDetail: { $arrayElemAt: [
+                                            {
+                                                $filter: {
+                                                    input: "$commentOwnerDetails",
+                                                    as: "owner",
+                                                    cond: { $eq: ["$$owner.userId", "$$comment.ownerId"] }
+                                                }
+                                            }, 0
+                                        ]}
+                                    },
+                                    in: {
+                                        userId: "$$ownerDetail.userId",
+                                        name: "$$ownerDetail.nickName", // Kullanıcı adı alanınızın adı
+                                        imageUrl: "$$ownerDetail.imageUrl"
+                                    }
+                                }
+                            }
+                            
+                            // Assuming ownerId maps to userId in your schema
+                            // other fields...
                         }
                     }
                 }
